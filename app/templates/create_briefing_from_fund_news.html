@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block title %}Create Briefing from Fund News{% endblock %}
+{% block content %}
+<h2>Create Briefing from Fund News</h2>
+<form method="POST" id="briefing-form">
+  <div class="mb-3">
+    <label for="fund-filter" class="form-label">Filter by Fund:</label>
+    <select id="fund-filter" class="form-select">
+      <option value="">All Funds</option>
+      {% for fund in funds %}
+        <option value="{{ fund }}">{{ fund }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="mb-3">
+    <table class="table table-bordered" id="articles-table">
+      <thead>
+        <tr>
+          <th scope="col">Select</th>
+          <th scope="col" id="sort-date" style="cursor:pointer; user-select:none; position:relative;" title="Click to sort by date">
+            <span style="text-decoration:underline dotted;">Date</span> <span id="date-sort-indicator" style="font-size:1em; color:#888;">▼</span>
+          </th>
+          <th scope="col">Title</th>
+          <th scope="col" id="sort-fund" style="cursor:pointer; user-select:none; position:relative;" title="Click to sort by fund">
+            <span style="text-decoration:underline dotted;">Funds</span> <span id="fund-sort-indicator" style="font-size:1em; color:#888;"> </span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for article in news %}
+        <tr data-funds="{{ article.funds|join(',') }}">
+          <td><input type="checkbox" name="selected_articles" value="{{ article.uuid }}"></td>
+          <td>{{ article.published_at_readable or article.published_at or article.publishedAt or '' }}</td>
+          <td><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></td>
+          <td>
+            {% for fund in article.funds %}
+              <span class="badge bg-info text-dark">{{ fund }}</span>
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+  <button type="submit" class="btn btn-primary">Generate Briefing</button>
+</form>
+{% if result %}
+  <div class="alert alert-success mt-4">
+    <h5>Briefing generated!</h5>
+    <ul>
+      <li><a href="/output/{{ result.markdown }}" target="_blank">Download Markdown</a></li>
+      <li><a href="/output/{{ result.html }}" target="_blank">Download HTML</a></li>
+      <li><a href="/output/{{ result.pdf }}" target="_blank">Download PDF</a></li>
+    </ul>
+  </div>
+{% endif %}
+<style>
+  #sort-date:hover, #sort-fund:hover {
+    background: #f0f8ff;
+    text-decoration: underline;
+  }
+  .active-sort {
+    color: #007bff !important;
+    font-weight: bold;
+  }
+</style>
+<script>
+  document.getElementById('fund-filter').addEventListener('change', function() {
+    var selectedFund = this.value;
+    document.querySelectorAll('#articles-table tbody tr').forEach(function(row) {
+      if (!selectedFund || row.getAttribute('data-funds').includes(selectedFund)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+
+  // --- Sorting logic ---
+  function compareDates(a, b, asc) {
+    const parse = str => {
+      if (!str) return 0;
+      let d = Date.parse(str);
+      if (!isNaN(d)) return d;
+      const parts = str.match(/(\d{2}) (\w{3}) (\d{4}), (\d{2}):(\d{2})/);
+      if (parts) {
+        const [ , day, mon, year, hour, min ] = parts;
+        return Date.parse(`${day} ${mon} ${year} ${hour}:${min}`);
+      }
+      return 0;
+    };
+    const d1 = parse(a);
+    const d2 = parse(b);
+    return asc ? d1 - d2 : d2 - d1;
+  }
+
+  function compareFunds(a, b, asc) {
+    const f1 = a.split(',')[0]?.trim().toLowerCase() || '';
+    const f2 = b.split(',')[0]?.trim().toLowerCase() || '';
+    if (f1 < f2) return asc ? -1 : 1;
+    if (f1 > f2) return asc ? 1 : -1;
+    return 0;
+  }
+
+  function sortTable(col, asc) {
+    const tbody = document.querySelector('#articles-table tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    rows.sort((rowA, rowB) => {
+      let valA, valB;
+      if (col === 'date') {
+        valA = rowA.children[1].textContent.trim();
+        valB = rowB.children[1].textContent.trim();
+        return compareDates(valA, valB, asc);
+      } else if (col === 'fund') {
+        valA = rowA.getAttribute('data-funds') || '';
+        valB = rowB.getAttribute('data-funds') || '';
+        return compareFunds(valA, valB, asc);
+      }
+      return 0;
+    });
+    rows.forEach(row => tbody.appendChild(row));
+  }
+
+  // Sorting state
+  let dateAsc = false;
+  let fundAsc = true;
+
+  function updateIndicators(col, asc) {
+    const dateInd = document.getElementById('date-sort-indicator');
+    const fundInd = document.getElementById('fund-sort-indicator');
+    // Remove active class
+    dateInd.classList.remove('active-sort');
+    fundInd.classList.remove('active-sort');
+    if (col === 'date') {
+      dateInd.textContent = asc ? '▲' : '▼';
+      dateInd.classList.add('active-sort');
+      fundInd.textContent = '';
+    } else if (col === 'fund') {
+      fundInd.textContent = asc ? '▲' : '▼';
+      fundInd.classList.add('active-sort');
+      dateInd.textContent = '';
+    }
+  }
+
+  document.getElementById('sort-date').addEventListener('click', function() {
+    dateAsc = !dateAsc;
+    sortTable('date', dateAsc);
+    updateIndicators('date', dateAsc);
+  });
+
+  document.getElementById('sort-fund').addEventListener('click', function() {
+    fundAsc = !fundAsc;
+    sortTable('fund', fundAsc);
+    updateIndicators('fund', fundAsc);
+  });
+</script>
+{% endblock %} 

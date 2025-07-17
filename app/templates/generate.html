@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Generate Briefing{% endblock %}
+{% block content %}
+<h2>Generate a New Briefing</h2>
+<form method="POST" id="briefing-form">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        {{ form.days_ago.label(class="form-label") }}
+        {{ form.days_ago(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.custom_keywords.label(class="form-label") }}
+        {{ form.custom_keywords(class="form-control") }}
+        <small class="form-text text-muted">Comma-separated keywords (optional).</small>
+    </div>
+    <button type="submit" class="btn btn-primary" id="submit-btn">{{ form.submit.label.text }}</button>
+</form>
+
+<!-- Spinner -->
+<div id="spinner" class="text-center mt-4" style="display:none;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p>Generating briefing, please wait...</p>
+</div>
+
+<!-- Error message -->
+{% if error %}
+<div class="alert alert-danger mt-3">{{ error }}</div>
+{% endif %}
+
+<!-- Success/result -->
+{% if result %}
+<div class="alert alert-success mt-3">Briefing generated successfully!</div>
+<ul>
+    <li>
+        <a href="{{ url_for('main.download_file', filename=result['markdown'].split('output/')[-1]) }}" target="_blank">Download Markdown</a>
+    </li>
+    <li>
+        <a href="{{ url_for('main.download_file', filename=result['html'].split('output/')[-1]) }}" target="_blank">Download HTML</a>
+        | <a href="{{ url_for('main.view_file', filename=result['html'].split('output/')[-1]) }}" target="_blank">View HTML</a>
+    </li>
+    <li>
+        <a href="{{ url_for('main.download_file', filename=result['pdf'].split('output/')[-1]) }}" target="_blank">Download PDF</a>
+        | <a href="{{ url_for('main.view_file', filename=result['pdf'].split('output/')[-1]) }}" target="_blank">View PDF</a>
+    </li>
+</ul>
+{% endif %}
+
+<script>
+// Show spinner on form submit
+const form = document.getElementById('briefing-form');
+const spinner = document.getElementById('spinner');
+const submitBtn = document.getElementById('submit-btn');
+if (form) {
+    form.addEventListener('submit', function() {
+        spinner.style.display = 'block';
+        submitBtn.disabled = true;
+    });
+}
+</script>
+{% endblock %} 

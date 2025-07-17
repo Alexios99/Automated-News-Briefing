@@ -1,0 +1,462 @@
+<html><head><title>COMPANY Weekly Market Briefing – 2025-07-06</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: #ffffff;
+            color: #1f2937;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        
+        .document-container {
+            max-width: 210mm;
+            margin: 0 auto;
+            background: white;
+            min-height: 297mm;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #065f46 0%, #0891b2 50%, #1e40af 100%);
+            color: white;
+            padding: 40px 32px 32px 32px;
+            position: relative;
+        }
+
+        .watermark {
+            position: fixed;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 120px;
+            color: #065f46;
+            opacity: 0.08;
+            font-weight: 900;
+            pointer-events: none;
+            z-index: 9999;
+            white-space: nowrap;
+            user-select: none;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #10b981, #06b6d4, #3b82f6);
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        
+        .logo-section img {
+            max-height: 60px;
+            width: auto;
+        }
+        
+        .document-info {
+            text-align: right;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .briefing-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .briefing-subtitle {
+            font-size: 16px;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+        
+        .briefing-date {
+            font-size: 14px;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+        
+        .executive-summary {
+            background: linear-gradient(135deg, #f0fdf4 0%, #f0f9ff 100%);
+            border-left: 4px solid #059669;
+            border-right: 4px solid #0891b2;
+            margin: 32px 32px 40px 32px;
+            padding: 24px 28px;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .executive-summary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #059669, #0891b2);
+        }
+        
+        .executive-summary h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #065f46;
+            margin-bottom: 12px;
+        }
+        
+        .executive-summary p {
+            color: #374151;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        
+        .articles-section {
+            padding: 0 32px 32px 32px;
+        }
+        
+        .section-header {
+            font-size: 20px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #065f46, #0891b2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 24px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid transparent;
+            border-image: linear-gradient(90deg, #10b981, #06b6d4) 1;
+        }
+        
+        .article-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(5, 95, 70, 0.08);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .article-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #10b981, #06b6d4);
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .article-number {
+            background: linear-gradient(135deg, #059669, #0891b2);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            flex-shrink: 0;
+            margin-right: 16px;
+            box-shadow: 0 2px 4px rgba(5, 95, 70, 0.2);
+        }
+        
+        .article-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            line-height: 1.4;
+            margin: 0;
+            flex-grow: 1;
+        }
+        
+        .article-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .meta-row {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+        }
+        
+        .meta-label {
+            font-weight: 500;
+            color: #059669;
+            flex-shrink: 0;
+        }
+        
+        .meta-value {
+            color: #374151;
+        }
+        
+        .sentiment-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .sentiment-positive {
+            background: linear-gradient(135deg, #dcfce7, #d1fae5);
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        
+        .sentiment-positive::before {
+            content: '●';
+            color: #10b981;
+        }
+        
+        .sentiment-neutral {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            color: #0c4a6e;
+            border: 1px solid #0891b2;
+        }
+        
+        .sentiment-neutral::before {
+            content: '●';
+            color: #0891b2;
+        }
+        
+        .sentiment-negative {
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        
+        .sentiment-negative::before {
+            content: '●';
+            color: #ef4444;
+        }
+        
+        .article-summary {
+            color: #374151;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        
+        .article-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #059669, #0891b2);
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13px;
+            padding: 10px 18px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(5, 95, 70, 0.2);
+        }
+        
+        .article-link::after {
+            content: '→';
+            transition: transform 0.2s ease;
+        }
+        
+        .article-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(5, 95, 70, 0.3);
+        }
+        
+        .article-link:hover::after {
+            transform: translateX(2px);
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #f0fdf4 0%, #f0f9ff 100%);
+            border-top: 3px solid transparent;
+            border-image: linear-gradient(90deg, #10b981, #06b6d4) 1;
+            padding: 24px 32px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: #065f46;
+        }
+        
+        .footer-copyright {
+            font-size: 11px;
+            color: #6b7280;
+        }
+        
+        .page-break {
+            page-break-before: always;
+        }
+        
+        @media print {
+            .article-card {
+                break-inside: avoid;
+            }
+        }
+    </style>
+    </head><body>
+<div class="document-container">
+<div class="watermark">DRAFT</div>
+<div class="header">
+<div class="header-content">
+<div class="logo-section">
+<img src="images/logo.png" alt="Logo" />
+</div>
+<div class="document-info">
+<div>Report Date: 2025-07-06</div>
+</div>
+</div>
+<div class="briefing-title">Weekly Market Briefing</div>
+<div class="briefing-date">Week Ending 2025-07-06</div>
+</div>
+<div class="executive-summary">
+<h2>Weekly Summary</h2>
+<p>This week's briefing highlights the increasing convergence of sustainability imperatives and investment opportunities. From India's call for a reformed global financial architecture to support the Global South's sustainable development goals, to the EBRD's €25 million loan to PBZ Leasing for Croatian MSMEs investing in green technologies, we observe a strengthening commitment to innovative financing solutions. Furthermore, emerging trends in circular economy integration with ocean preservation and a new market report forecasting growth in deep sea, coastal, and Great Lakes sectors point to expanding blue economy investment opportunities. As institutional appetite for ESG-aligned assets grows, understanding these trends will be critical for strategic asset allocation and realizing impactful returns in sustainable finance.</p>
+</div>
+<div class="articles-section">
+<h2 class="section-header">COMPANY Intelligence</h2>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">1</div>
+<h3 class="article-title">FM Nirmala Sitharaman calls for decisive action by Global South</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">The Times of India</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-07-04T19:12:33Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-positive">Positive Impact</div>
+<div class="article-summary"><ul>
+<li>India is urging the Global South to take unified action to address economic uncertainties caused by fiscal limitations and geopolitical shifts, which necessitates innovative financing solutions.</li>
+<li>The call emphasizes the need for increased investment in sustainable development initiatives within developing nations to mitigate the impacts of global challenges.</li>
+<li>The appeal highlights the importance of reshaping global financial architecture and fostering collaborative partnerships to unlock sustainable financing for developing economies, presenting opportunities for institutional investors focused on ESG mandates.</li>
+</ul>
+<p>Topic: Regulatory &amp; Policy</p>
+<p>Mentioned Companies: None</p></div>
+<a class="article-link" href="https://economictimes.indiatimes.com/news/india/fm-nirmala-sitharaman-calls-for-decisive-action-by-global-south/articleshow/122256868.cms" target="_blank">Read Full Article</a>
+</div>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">2</div>
+<h3 class="article-title">Turning Ocean Preservation Into an Economic Windfall</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">Project Syndicate</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-07-04T15:00:03Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-positive">Positive Impact</div>
+<div class="article-summary"><p>Here's a summary for institutional investors in the sustainable finance sector:</p>
+<ul>
+<li><strong>Circular Economy &amp; Ocean Preservation Integration:</strong> The article highlights the growing link between circular economy technologies and ocean preservation, presenting it as a driver for industrial revitalization and geopolitical stability. This intersection creates new investment opportunities within the blue economy.</li>
+<li><strong>Innovation &amp; Growth Potential:</strong> The surge in innovative technologies for ocean preservation suggests a high-growth market for sustainable investments. Institutional investors can expect increasing opportunities in companies developing and deploying these technologies.</li>
+<li><strong>Unlock Full Potential:</strong> Unlocking the full potential of the new industrial renewal and geopolitical resilience needs funding. The sustainable finance sector should seek opportunities in ocean preservation and circular economy technologies</li>
+</ul>
+<p>Topic: Market Trends</p>
+<p>Mentioned Companies: None</p></div>
+<a class="article-link" href="https://www.project-syndicate.org/commentary/ocean-preservation-underappreciated-economic-opportunity-by-bertrand-piccard-2025-07" target="_blank">Read Full Article</a>
+</div>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">3</div>
+<h3 class="article-title">PBZ Leasing secures €25m EBRD loan to boost green MSMEs in Croatia</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">Leasinglife.com</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-07-04T12:52:01Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-positive">Positive Impact</div>
+<div class="article-summary"><ul>
+<li>PBZ Leasing secures a €25 million loan from the EBRD to expand leasing opportunities for Croatian MSMEs, specifically targeting investments in green technologies and sustainable practices.</li>
+<li>This funding injection provides institutional investors with a concrete example of how international financial institutions (IFIs) are actively deploying capital to support sustainable development goals (SDGs) in emerging markets, creating potential co-investment opportunities.</li>
+<li>The focus on green technologies and sustainable practices aligns with the growing demand for ESG-focused investments, offering institutional investors a chance to diversify their portfolios with impactful, environmentally conscious assets in the leasing sector.</li>
+</ul>
+<p>Topic: Corporate Action</p>
+<p>Mentioned Companies: None</p></div>
+<a class="article-link" href="https://www.leasinglife.com/news/pbz-leasing-secures-e25m-ebrd-loan-to-boost-green-msmes-in-croatia/" target="_blank">Read Full Article</a>
+</div>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">4</div>
+<h3 class="article-title">Deep Sea, Coastal, and Great Lakes Market 2025-2034 | Sustainability and Climate Change to Shape the Future of the Industry</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">GlobeNewswire</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-07-04T09:46:00Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-positive">Positive Impact</div>
+<div class="article-summary"><ul>
+<li>A new market report forecasts growth in the "Deep Sea, Coastal, and Great Lakes Market" from 2025-2034, signaling potential investment opportunities in related sectors.</li>
+<li>The report's detailed analysis could inform institutional investors' due diligence and strategic asset allocation within sustainable marine resource management and blue economy initiatives.</li>
+<li>Demand for detailed information regarding these markets is increasing among investors, suggesting a growing interest in financing environmentally sustainable solutions for ocean and freshwater ecosystems.</li>
+</ul>
+<p>Topic: Market Trends
+Mentioned Companies: None</p></div>
+<a class="article-link" href="https://www.globenewswire.com/news-release/2025/07/04/3110297/28124/en/Deep-Sea-Coastal-and-Great-Lakes-Market-2025-2034-Sustainability-and-Climate-Change-to-Shape-the-Future-of-the-Industry.html" target="_blank">Read Full Article</a>
+</div>
+</div>
+<div class="footer">
+<div class="footer-content">
+<div>COMPANY</div>
+<div>Generated on 2025-07-06</div>
+</div>
+<div class="footer-copyright">&copy; COMPANY</div>
+</div>
+</div>
+</body></html>

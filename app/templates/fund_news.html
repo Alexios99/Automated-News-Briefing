@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Fund News{% endblock %}
+{% block content %}
+<h2>Fund News</h2>
+<button id="update-fund-news" class="btn btn-primary mb-3">Update Fund News</button>
+<div id="update-status" class="mb-3" style="display:none;"></div>
+<ul id="news-list">
+  {% for article in news %}
+    <li>
+      <a href="{{ article['url'] }}" target="_blank">{{ article['title'] }}</a>
+      <br>
+      <small>{{ article.get('published_at', article.get('publishedAt', '')) }}</small>
+    </li>
+  {% endfor %}
+</ul>
+<script>
+  document.getElementById('update-fund-news').addEventListener('click', function() {
+    var status = document.getElementById('update-status');
+    status.style.display = 'block';
+    status.className = 'mb-3 alert alert-info';
+    status.textContent = 'Updating fund news...';
+    fetch('/update_fund_news', {method: 'POST'})
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          status.className = 'mb-3 alert alert-success';
+          status.textContent = data.message;
+          setTimeout(() => window.location.reload(), 1000);
+        } else {
+          status.className = 'mb-3 alert alert-danger';
+          status.textContent = data.message || 'Error updating fund news.';
+        }
+      })
+      .catch(() => {
+        status.className = 'mb-3 alert alert-danger';
+        status.textContent = 'Error updating fund news.';
+      });
+  });
+</script>
+{% endblock %} 

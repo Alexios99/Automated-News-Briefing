@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% block title %}Configure Sources & Funds{% endblock %}
+{% block content %}
+<h2 class="mb-4">Configuration</h2>
+<div id="alert-area"></div>
+<div class="row">
+  <div class="col-md-6">
+    <h4>Funds</h4>
+    <p class="text-muted">These funds are used for fund news fetching and analysis.</p>
+    <table class="table table-bordered align-middle" id="funds-table">
+      <thead class="table-light">
+        <tr><th>Fund Name</th><th style="width: 40px"></th></tr>
+      </thead>
+      <tbody>
+        {% for fund in config.FUNDS %}
+        <tr>
+          <td contenteditable="true" class="fund-cell">{{ fund }}</td>
+          <td><button class="btn btn-sm btn-danger remove-fund" title="Remove"><span>&times;</span></button></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" id="new-fund" placeholder="Add new fund">
+      <button class="btn btn-success" id="add-fund">Add</button>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <h4>Keywords</h4>
+    <p class="text-muted">These keywords are used for news and briefing searches.</p>
+    <table class="table table-bordered align-middle" id="keywords-table">
+      <thead class="table-light">
+        <tr><th>Keyword</th><th style="width: 40px"></th></tr>
+      </thead>
+      <tbody>
+        {% for kw in config.RELEVANT_KEYWORDS %}
+        <tr>
+          <td contenteditable="true" class="keyword-cell">{{ kw }}</td>
+          <td><button class="btn btn-sm btn-danger remove-keyword" title="Remove"><span>&times;</span></button></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" id="new-keyword" placeholder="Add new keyword">
+      <button class="btn btn-success" id="add-keyword">Add</button>
+    </div>
+  </div>
+</div>
+<div class="row mt-4">
+  <div class="col-md-12">
+    <h4>API Keys</h4>
+    <p class="text-muted">Set your API keys for MarketAux, Google, and NewsAPI here. These are required for news and summarization features.</p>
+    <form id="api-keys-form">
+      <div class="mb-3">
+        <label for="marketaux-key" class="form-label">MarketAux API Token</label>
+        <input type="text" class="form-control" id="marketaux-key" value="{{ config.MARKETAUX_API_TOKEN|default('') }}">
+      </div>
+      <div class="mb-3">
+        <label for="google-key" class="form-label">Google API Key</label>
+        <input type="text" class="form-control" id="google-key" value="{{ config.GOOGLE_API_KEY|default('') }}">
+      </div>
+      <div class="mb-3">
+        <label for="newsapi-key" class="form-label">NewsAPI Key</label>
+        <input type="text" class="form-control" id="newsapi-key" value="{{ config.NEWS_API_KEY|default('') }}">
+      </div>
+    </form>
+  </div>
+</div>
+<div class="mt-4 d-flex gap-2">
+  <button class="btn btn-primary" id="save-config"><i class="bi bi-save"></i> Save</button>
+  <button class="btn btn-warning" id="reset-config"><i class="bi bi-arrow-counterclockwise"></i> Reset to Default</button>
+  <form id="upload-form" enctype="multipart/form-data" class="d-inline">
+    <label class="btn btn-secondary mb-0">
+      <input type="file" id="upload-config" name="file" hidden> Upload
+    </label>
+  </form>
+  <a href="/config/download" class="btn btn-secondary">Download</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<script>
+function showAlert(message, type) {
+  $('#alert-area').html(`<div class="alert alert-${type} alert-dismissible fade show" role="alert">${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`);
+}
+
+// Funds
+$('#add-fund').click(function() {
+  const val = $('#new-fund').val().trim();
+  if (val) {
+    $('#funds-table tbody').append(`<tr><td contenteditable="true" class="fund-cell">${val}</td><td><button class="btn btn-sm btn-danger remove-fund"><span>&times;</span></button></td></tr>`);
+    $('#new-fund').val('');
+  }
+});
+$('#funds-table').on('click', '.remove-fund', function() {
+  $(this).closest('tr').remove();
+});
+
+// Keywords
+$('#add-keyword').click(function() {
+  const val = $('#new-keyword').val().trim();
+  if (val) {
+    $('#keywords-table tbody').append(`<tr><td contenteditable="true" class="keyword-cell">${val}</td><td><button class="btn btn-sm btn-danger remove-keyword"><span>&times;</span></button></td></tr>`);
+    $('#new-keyword').val('');
+  }
+});
+$('#keywords-table').on('click', '.remove-keyword', function() {
+  $(this).closest('tr').remove();
+});
+
+// Save
+$('#save-config').click(function() {
+  const funds = [];
+  $('#funds-table .fund-cell').each(function() {
+    const val = $(this).text().trim();
+    if (val) funds.push(val);
+  });
+  const keywords = [];
+  $('#keywords-table .keyword-cell').each(function() {
+    const val = $(this).text().trim();
+    if (val) keywords.push(val);
+  });
+  const marketauxKey = $('#marketaux-key').val().trim();
+  const googleKey = $('#google-key').val().trim();
+  const newsapiKey = $('#newsapi-key').val().trim();
+  $.ajax({
+    url: '/config/save',
+    method: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({
+      FUNDS: funds,
+      RELEVANT_KEYWORDS: keywords,
+      MARKETAUX_API_TOKEN: marketauxKey,
+      GOOGLE_API_KEY: googleKey,
+      NEWS_API_KEY: newsapiKey
+    }),
+    success: function(resp) {
+      showAlert(resp.message, 'success');
+    },
+    error: function(xhr) {
+      showAlert(xhr.responseJSON?.message || 'Error saving config.', 'danger');
+    }
+  });
+});
+
+// Reset
+$('#reset-config').click(function() {
+  if (!confirm('Are you sure you want to reset to default?')) return;
+  $.post('/config/reset', function(resp) {
+    if (resp.success) location.reload();
+    else showAlert(resp.message, 'danger');
+  }).fail(function(xhr) {
+    showAlert(xhr.responseJSON?.message || 'Error resetting config.', 'danger');
+  });
+});
+
+// Upload
+$('#upload-config').change(function() {
+  const file = this.files[0];
+  if (!file) return;
+  const formData = new FormData();
+  formData.append('file', file);
+  $.ajax({
+    url: '/config/upload',
+    method: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function(resp) {
+      showAlert(resp.message, 'success');
+      setTimeout(() => location.reload(), 1000);
+    },
+    error: function(xhr) {
+      showAlert(xhr.responseJSON?.message || 'Error uploading config.', 'danger');
+    }
+  });
+});
+</script>
+{% endblock %} 

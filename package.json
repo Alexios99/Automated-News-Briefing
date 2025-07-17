@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@mozilla/readability": "^0.6.0",
+    "axios": "^1.10.0",
+    "jsdom": "^26.1.0"
+  }
+}

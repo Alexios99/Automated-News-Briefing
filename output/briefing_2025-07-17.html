@@ -1,0 +1,560 @@
+<html><head><title>COMPANY Weekly Market Briefing – 2025-07-17</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: #ffffff;
+            color: #1f2937;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        
+        .document-container {
+            max-width: 210mm;
+            margin: 0 auto;
+            background: white;
+            min-height: 297mm;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #065f46 0%, #0891b2 50%, #1e40af 100%);
+            color: white;
+            padding: 40px 32px 32px 32px;
+            position: relative;
+        }
+
+        .watermark {
+            position: fixed;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 120px;
+            color: #065f46;
+            opacity: 0.08;
+            font-weight: 900;
+            pointer-events: none;
+            z-index: 9999;
+            white-space: nowrap;
+            user-select: none;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #10b981, #06b6d4, #3b82f6);
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        
+        .logo-section img {
+            max-height: 60px;
+            width: auto;
+        }
+        
+        .document-info {
+            text-align: right;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .briefing-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .briefing-subtitle {
+            font-size: 16px;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+        
+        .briefing-date {
+            font-size: 14px;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+        
+        .executive-summary {
+            background: linear-gradient(135deg, #f0fdf4 0%, #f0f9ff 100%);
+            border-left: 4px solid #059669;
+            border-right: 4px solid #0891b2;
+            margin: 32px 32px 40px 32px;
+            padding: 24px 28px;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .executive-summary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #059669, #0891b2);
+        }
+        
+        .executive-summary h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #065f46;
+            margin-bottom: 12px;
+        }
+        
+        .executive-summary p {
+            color: #374151;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        
+        .articles-section {
+            padding: 0 32px 32px 32px;
+        }
+        
+        .section-header {
+            font-size: 20px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #065f46, #0891b2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 24px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid transparent;
+            border-image: linear-gradient(90deg, #10b981, #06b6d4) 1;
+        }
+        
+        .article-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(5, 95, 70, 0.08);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .article-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #10b981, #06b6d4);
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .article-number {
+            background: linear-gradient(135deg, #059669, #0891b2);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            flex-shrink: 0;
+            margin-right: 16px;
+            box-shadow: 0 2px 4px rgba(5, 95, 70, 0.2);
+        }
+        
+        .article-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            line-height: 1.4;
+            margin: 0;
+            flex-grow: 1;
+        }
+        
+        .article-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .meta-row {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+        }
+        
+        .meta-label {
+            font-weight: 500;
+            color: #059669;
+            flex-shrink: 0;
+        }
+        
+        .meta-value {
+            color: #374151;
+        }
+        
+        .sentiment-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .sentiment-positive {
+            background: linear-gradient(135deg, #dcfce7, #d1fae5);
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        
+        .sentiment-positive::before {
+            content: '●';
+            color: #10b981;
+        }
+        
+        .sentiment-neutral {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            color: #0c4a6e;
+            border: 1px solid #0891b2;
+        }
+        
+        .sentiment-neutral::before {
+            content: '●';
+            color: #0891b2;
+        }
+        
+        .sentiment-negative {
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        
+        .sentiment-negative::before {
+            content: '●';
+            color: #ef4444;
+        }
+        
+        .article-summary {
+            color: #374151;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        
+        .article-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #059669, #0891b2);
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13px;
+            padding: 10px 18px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(5, 95, 70, 0.2);
+        }
+        
+        .article-link::after {
+            content: '→';
+            transition: transform 0.2s ease;
+        }
+        
+        .article-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(5, 95, 70, 0.3);
+        }
+        
+        .article-link:hover::after {
+            transform: translateX(2px);
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #f0fdf4 0%, #f0f9ff 100%);
+            border-top: 3px solid transparent;
+            border-image: linear-gradient(90deg, #10b981, #06b6d4) 1;
+            padding: 24px 32px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: #065f46;
+        }
+        
+        .footer-copyright {
+            font-size: 11px;
+            color: #6b7280;
+        }
+        
+        .page-break {
+            page-break-before: always;
+        }
+        
+        @media print {
+            .article-card {
+                break-inside: avoid;
+            }
+        }
+        .fund-performance-section {
+            margin: 32px 32px 40px 32px;
+            padding: 24px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .performance-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .perf-card {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .perf-card.best { border-left: 4px solid #10b981; }
+        .perf-card.worst { border-left: 4px solid #ef4444; }
+
+        .fund-tables {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .fund-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .fund-table th, .fund-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .discount-positive { color: #059669; font-weight: 600; }
+        .discount-negative { color: #dc2626; font-weight: 600; }
+    </style>
+    </head><body>
+<div class="document-container">
+<div class="watermark">DRAFT</div>
+<div class="header">
+<div class="header-content">
+<div class="logo-section">
+<img src="images/logo.png" alt="Logo" />
+</div>
+<div class="document-info">
+<div>Report Date: 2025-07-17</div>
+</div>
+</div>
+<div class="briefing-title">Weekly Market Briefing</div>
+<div class="briefing-date">Week Ending 2025-07-17</div>
+</div>
+<div class="executive-summary">
+<h2>Weekly Summary</h2>
+<p>This week's briefing highlights increasing regulatory and policy headwinds facing sustainable finance, alongside emerging opportunities, particularly within the blue economy. Indonesia's commitment to sustainable maritime development presents a key emerging market opportunity, bolstered by supportive government signals. However, political scrutiny surrounding ESG investing is intensifying, demanding greater transparency and potentially reshaping investment allocation. The UK's abandonment of its Green Taxonomy adds further uncertainty to the regulatory landscape, contrasting with global efforts for standardization and potentially hindering domestic sustainable investment. Institutional investors must proactively analyze evolving tax policies and prepare for collaborative public-private partnerships to capitalize on opportunities within the climate transition, while carefully navigating increased political and regulatory complexities.</p>
+</div>
+<div class="fund-performance-section">
+<h2 class="section-header">📊 Listed Fund Performance Summary</h2>
+<div class="fund-tables">
+<div class="fund-table-container">
+<h3>🟢 Smallest Discounts</h3>
+<table class="fund-table">
+<tr><th>Fund</th><th>Price</th><th>NAV</th><th>Discount</th></tr>
+<tr><td>Downing Renewables & Infrastructure</td><td>£101.75</td><td>£112.36</td><td class="discount-positive">-9.4%</td></tr>
+<tr><td>Impax Environmental Markets</td><td>£387.00</td><td>£428.53</td><td class="discount-positive">-9.7%</td></tr>
+<tr><td>Greencoat UK Wind</td><td>£126.00</td><td>£150.00</td><td class="discount-positive">-16.0%</td></tr>
+<tr><td>Foresight Solar Fund</td><td>£92.10</td><td>£111.00</td><td class="discount-positive">-17.0%</td></tr>
+<tr><td>Renewables Infrastructure Group</td><td>£88.80</td><td>£112.70</td><td class="discount-positive">-21.2%</td></tr>
+</table>
+</div>
+<div class="fund-table-container">
+<h3>🔴 Largest Discounts</h3>
+<table class="fund-table">
+<tr><th>Fund</th><th>Price</th><th>NAV</th><th>Discount</th></tr>
+<tr><td>SDCL Efficiency Income</td><td>£57.50</td><td>£90.60</td><td class="discount-negative">-36.5%</td></tr>
+<tr><td>Gore Street Energy Storage Fund</td><td>£63.70</td><td>£102.80</td><td class="discount-negative">-38.0%</td></tr>
+<tr><td>Aquila Energy Efficiency Trust</td><td>£33.70</td><td>£85.55</td><td class="discount-negative">-60.6%</td></tr>
+<tr><td>HydrogenOne Capital Growth</td><td>£26.90</td><td>£89.28</td><td class="discount-negative">-69.9%</td></tr>
+<tr><td>Aquila European Renewables</td><td>£53.40</td><td>£7639.09</td><td class="discount-negative">-99.3%</td></tr>
+</table>
+</div>
+</div>
+<div class="articles-section">
+<h2 class="section-header">COMPANY Intelligence</h2>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">1</div>
+<h3 class="article-title">Maritime security foundation of blue economy: Bappenas</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">Antaranews.com</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-07-16T08:57:18Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-positive">Positive Impact</div>
+<div class="article-summary"><ul>
+<li><strong>Indonesia prioritizes sustainable maritime development:</strong> The Indonesian government is actively focusing on sustainable development within its maritime sector, presenting potential investment opportunities aligned with ESG (Environmental, Social, and Governance) criteria.</li>
+<li><strong>Government signals policy support for green investments:</strong> The Deputy Minister's statements suggest forthcoming policy initiatives and national development planning will favor projects that promote environmental sustainability in the maritime domain.</li>
+<li><strong>Long-term investment horizon in emerging market:</strong> This initiative offers institutional investors a chance to engage in long-term sustainable infrastructure projects within a significant emerging market.</li>
+</ul>
+<p>Topic: Regulatory &amp; Policy
+Mentioned Companies: None</p></div>
+<a class="article-link" href="https://en.antaranews.com/news/366753/maritime-security-foundation-of-blue-economy-bappenas" target="_blank">Read Full Article</a>
+</div>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">2</div>
+<h3 class="article-title">Reeves Gives up on Calling Herself an ‘Economist’ at Mansion House Speech</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">Order-order.com</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-07-16T08:32:34Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-negative">Negative Impact</div>
+<div class="article-summary"><ul>
+<li><strong>Increased Political Scrutiny on ESG Investing:</strong> The article suggests heightened political examination of ESG (Environmental, Social, and Governance) investing practices. This scrutiny could lead to potential regulatory changes or policy shifts affecting how institutional investors integrate ESG factors into their investment strategies.</li>
+<li><strong>Need for Transparency and Substantiation:</strong> The focus on the UK Shadow Chancellor's background and remarks implies a demand for greater transparency and verifiable evidence supporting ESG claims. Institutional investors will likely face pressure to demonstrate the tangible impact and authenticity of their sustainable investments.</li>
+<li><strong>Potential Impact on Investment Allocation:</strong> If future regulatory or policy changes occur due to the raised political scrutiny, they could influence how institutional investors allocate capital to sustainable assets. Investors may need to adapt their strategies to comply with new rules or requirements.</li>
+</ul>
+<p>Topic: Regulatory &amp; Policy
+Mentioned Companies: None</p></div>
+<a class="article-link" href="https://order-order.com/2025/07/16/reeves-gives-up-on-calling-herself-an-economist-at-mansion-house-speech/" target="_blank">Read Full Article</a>
+</div>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">3</div>
+<h3 class="article-title">Let's talk about tax: Treasury's error does the government a favour</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">ABC News (AU)</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-07-15T21:19:20Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-positive">Positive Impact</div>
+<div class="article-summary"><ul>
+<li><strong>Potential Tax Reform Impact:</strong> The article suggests possible tax reforms are coming, which could significantly alter investment strategies and returns for institutional investors.</li>
+<li><strong>Fiscal Policy Uncertainty:</strong> Increased political debate surrounding tax changes creates uncertainty, potentially impacting asset allocation decisions and risk management strategies in the sustainable finance sector.</li>
+<li><strong>Need for Proactive Analysis:</strong> Institutional investors need to proactively analyze the potential impacts of these proposed tax changes on their portfolios and adjust strategies accordingly to mitigate risks and capitalize on opportunities.</li>
+</ul>
+<p>Topic: Regulatory &amp; Policy
+Mentioned Companies: None</p></div>
+<a class="article-link" href="https://www.abc.net.au/news/2025-07-16/tax-talk-ramps-up-after-treasury-foi-ahead-of-roundtable/105534060" target="_blank">Read Full Article</a>
+</div>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">4</div>
+<h3 class="article-title">Rachel Reeves Mansion House 2025 speech</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">Www.gov.uk</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-07-15T21:15:16Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-neutral">Neutral Impact</div>
+<div class="article-summary"><ul>
+<li><strong>Keynote speech emphasizes the importance of mobilizing private finance for climate transition:</strong> Institutional investors are being called upon to play a critical role in funding the net-zero transition, suggesting increased pressure and opportunities in sustainable investment.</li>
+<li><strong>Public-private partnerships are highlighted as crucial for achieving climate goals:</strong> The speech indicates a push for collaborative investment strategies, signaling potential avenues for institutional investors to engage with government-backed initiatives.</li>
+<li><strong>Focus on aligning financial flows with climate objectives</strong>: this implies potentially new standards, metrics, and reporting requirements for sustainable investments, which institutional investors need to consider in their strategies and risk management.</li>
+</ul>
+<p>Topic: Regulatory &amp; Policy</p>
+<p>Mentioned Companies: None</p></div>
+<a class="article-link" href="https://www.gov.uk/government/speeches/rachel-reeves-mansion-house-2025-speech" target="_blank">Read Full Article</a>
+</div>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">5</div>
+<h3 class="article-title">UK Green Taxonomy Dies As Sustainability Regulations Face Global Pushback</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">Forbes</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-07-15T19:22:13Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-positive">Positive Impact</div>
+<div class="article-summary"><ul>
+<li>
+<p><strong>Abandonment of UK Green Taxonomy:</strong> The UK government has scrapped plans to develop a UK Green Taxonomy, a framework for defining environmentally sustainable economic activities. This removes a potentially crucial tool for standardizing green investments and assessing environmental impact within the UK market.</p>
+</li>
+<li>
+<p><strong>Increased Uncertainty for Sustainable Investment:</strong> The decision introduces greater uncertainty for institutional investors seeking to allocate capital to genuinely sustainable assets in the UK. The absence of a clear taxonomy could lead to greenwashing concerns and hinder the growth of sustainable finance in the UK.</p>
+</li>
+<li>
+<p><strong>Potential Impact on Regulatory Alignment:</strong> The UK's deviation from international efforts to establish standardized green taxonomies (e.g., the EU Taxonomy) could complicate cross-border sustainable investments and raise questions about the UK's commitment to global sustainability initiatives.</p>
+</li>
+</ul>
+<p>Topic: Regulatory &amp; Policy</p>
+<p>Mentioned Companies: None</p></div>
+<a class="article-link" href="https://www.forbes.com/sites/jonmcgowan/2025/07/15/uk-green-taxonomy-dies-as-sustainability-regulations-face-global-pushback/" target="_blank">Read Full Article</a>
+</div>
+</div>
+<div class="footer">
+<div class="footer-content">
+<div>COMPANY</div>
+<div>Generated on 2025-07-17</div>
+</div>
+<div class="footer-copyright">&copy; COMPANY</div>
+</div>
+</div>
+</body></html>
