@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, send_from_directory, abort, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, send_from_directory, abort, jsonify, session
 from .forms import GenerateBriefingForm
-from main import run_pipeline
+from main import run_pipeline, fetch_articles_for_briefing, generate_briefing_from_articles
 import os
 import re
 from .utils import list_briefings, load_config, save_config, reset_config
@@ -22,22 +22,22 @@ def home():
 def generate():
     form = GenerateBriefingForm()
 
-    # Dynamically load fund choices from the configuration file
     result = None
     error = None
     if form.validate_on_submit():
         days_ago = form.days_ago.data if form.days_ago.data is not None else 0
         custom_keywords = [k.strip() for k in form.custom_keywords.data.split(',')] if form.custom_keywords.data else None
         try:
-            result = run_pipeline(
-                output_dir=OUTPUT_DIR,
-                from_days_ago=days_ago,
-                keywords=custom_keywords,
-            )
-            if not result:
-                error = 'No articles found or accepted.'
-            else:
-                flash('Briefing generated successfully!', 'success')
+            # Step 1: Fetch articles only
+            articles = fetch_articles_for_briefing(custom_keywords, from_days_ago=days_ago)
+            if not articles:
+                error = 'No articles found.'
+                return render_template('generate.html', form=form, result=None, error=error)
+            # Store articles in session for human screening
+            session['screen_articles'] = articles
+            session['screen_index'] = 0
+            session['accepted_articles'] = []
+            return redirect(url_for('main.human_screen'))
         except Exception as e:
             error = str(e)
             flash(f'Error: {error}', 'danger')
@@ -215,4 +215,98 @@ def create_briefing_from_fund_news():
         'html': os.path.basename(html_path),
         'pdf': os.path.basename(pdf_path)
     }
-    return render_template('create_briefing_from_fund_news.html', news=all_news, funds=funds, result=result, error=None) 
+    return render_template('create_briefing_from_fund_news.html', news=all_news, funds=funds, result=result, error=None)
+
+@main.route('/human_screen', methods=['GET', 'POST'])
+def human_screen():
+    # Use articles from session, not from file
+    all_articles = session.get('screen_articles', [])
+    if not all_articles:
+        # If no articles in session, redirect to generate
+        flash('No articles to screen. Please generate briefing first.', 'warning')
+        return redirect(url_for('main.generate'))
+
+    # Initialize session state if not present
+    if 'screen_index' not in session or request.method == 'GET':
+        session['screen_index'] = 0
+        session['accepted_articles'] = []
+
+    screen_index = session.get('screen_index', 0)
+    accepted_articles = session.get('accepted_articles', [])
+
+    # Handle POST actions
+    if request.method == 'POST':
+        action = request.form.get('action')
+        if action == 'accept':
+            # Accept current article
+            if 0 <= screen_index < len(all_articles):
+                if all_articles[screen_index] not in accepted_articles:
+                    accepted_articles.append(all_articles[screen_index])
+                session['accepted_articles'] = accepted_articles
+            screen_index += 1
+        elif action == 'reject':
+            # Just move to next article
+            screen_index += 1
+        elif action == 'back':
+            # Move to previous article, remove from accepted if it was accepted
+            if screen_index > 0:
+                screen_index -= 1
+                article = all_articles[screen_index]
+                if article in accepted_articles:
+                    accepted_articles.remove(article)
+                session['accepted_articles'] = accepted_articles
+        elif action == 'finish':
+            # Finish screening, generate briefing from accepted articles
+            if not accepted_articles:
+                return render_template('human_screen.html',
+                                       finished=True,
+                                       accepted_articles=[],
+                                       total=len(all_articles),
+                                       result=None,
+                                       error='No articles accepted.')
+            # Generate briefing
+            output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'output'))
+            result = generate_briefing_from_articles(accepted_articles, output_dir=output_dir)
+            # Clean up session
+            session.pop('screen_articles', None)
+            session.pop('screen_index', None)
+            session.pop('accepted_articles', None)
+            return render_template('human_screen.html',
+                                   finished=True,
+                                   accepted_articles=accepted_articles,
+                                   total=len(all_articles),
+                                   result=result,
+                                   error=None)
+        session['screen_index'] = screen_index
+
+    # If finished all articles, generate briefing automatically
+    if screen_index >= len(all_articles):
+        if not accepted_articles:
+            return render_template('human_screen.html',
+                                   finished=True,
+                                   accepted_articles=[],
+                                   total=len(all_articles),
+                                   result=None,
+                                   error='No articles accepted.')
+        output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'output'))
+        result = generate_briefing_from_articles(accepted_articles, output_dir=output_dir)
+        # Clean up session
+        session.pop('screen_articles', None)
+        session.pop('screen_index', None)
+        session.pop('accepted_articles', None)
+        return render_template('human_screen.html',
+                               finished=True,
+                               accepted_articles=accepted_articles,
+                               total=len(all_articles),
+                               result=result,
+                               error=None)
+
+    # Show current article
+    article = all_articles[screen_index]
+    return render_template('human_screen.html',
+                           article=article,
+                           index=screen_index+1,
+                           total=len(all_articles),
+                           finished=False,
+                           result=None,
+                           error=None) 

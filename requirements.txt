@@ -13,4 +13,5 @@ lxml
 Flask>=2.0
 Flask-WTF>=1.0
 WTForms>=3.0
+Flask-Session
 

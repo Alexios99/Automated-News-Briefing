@@ -16,39 +16,26 @@ from fund_info import refresh_fund_data
 from fund_news_fetcher import fetch_news_for_funds
 
 
-def run_pipeline(
-    output_dir: str = "./output",
-    from_days_ago: int = 3,
+def fetch_articles_for_briefing(
     keywords: Optional[List[str]] = None,
-    funds: Optional[List[str]] = None
+    from_days_ago: int = 3
+) -> List[dict]:
+    """
+    Fetch articles for briefing, without human screening or further processing.
+    """
+    search_keywords = keywords if keywords else KEYWORDS
+    articles = fetch_articles(search_keywords, from_days_ago=from_days_ago)
+    return articles
+
+
+def generate_briefing_from_articles(
+    articles: List[dict],
+    output_dir: str = "./output"
 ):
     """
-    Run the sustainable finance news summarization pipeline.
-    Args:
-        output_dir (str): Directory to save the output files.
-        from_days_ago (int): Number of days ago to fetch articles from.
-        keywords (List[str], optional): Custom keywords to search for.
-        funds (List[str], optional): Custom funds to include (currently not used in logic).
+    Generate the briefing from a list of accepted articles.
     """
     os.makedirs(output_dir, exist_ok=True)
-
-    # Step 1: Fetch articles from NewsAPI
-    print("Fetching articles...")
-    search_keywords = keywords if keywords else KEYWORDS
-    all_accepted = []
-
-    articles = fetch_articles(search_keywords, from_days_ago=from_days_ago)
-    screened = human_screen_articles(articles)
-    all_accepted.extend(screened)
-
-    if not all_accepted:
-        print("No articles accepted. Exiting.")
-        return None
-    if not articles:
-        print("No articles found. Exiting.")
-        return None
-    articles = all_accepted
-
     # Step 2: Filter articles (scoring temporarily disabled)
     print("Filtering articles...")
     filtered_articles = []
@@ -122,10 +109,47 @@ def run_pipeline(
     print(f"- PDF: {pdf_path}")
 
     return {
-        "markdown": markdown_path,
-        "html": html_path,
-        "pdf": pdf_path
+        "markdown": os.path.basename(markdown_path),
+        "html": os.path.basename(html_path),
+        "pdf": os.path.basename(pdf_path)
     }
+
+
+def run_pipeline(
+    output_dir: str = "./output",
+    from_days_ago: int = 3,
+    keywords: Optional[List[str]] = None,
+    funds: Optional[List[str]] = None
+):
+    """
+    Run the sustainable finance news summarization pipeline.
+    Args:
+        output_dir (str): Directory to save the output files.
+        from_days_ago (int): Number of days ago to fetch articles from.
+        keywords (List[str], optional): Custom keywords to search for.
+        funds (List[str], optional): Custom funds to include (currently not used in logic).
+    """
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Step 1: Fetch articles from NewsAPI
+    print("Fetching articles...")
+    search_keywords = keywords if keywords else KEYWORDS
+    all_accepted = []
+
+    articles = fetch_articles_for_briefing(search_keywords, from_days_ago=from_days_ago)
+    screened = human_screen_articles(articles)
+    all_accepted.extend(screened)
+
+    if not all_accepted:
+        print("No articles accepted. Exiting.")
+        return None
+    if not articles:
+        print("No articles found. Exiting.")
+        return None
+    articles = all_accepted
+
+    # Now generate the briefing from the accepted articles
+    return generate_briefing_from_articles(articles, output_dir=output_dir)
 
 
 def main(output_dir: str = "./output", from_days_ago: int = 3):

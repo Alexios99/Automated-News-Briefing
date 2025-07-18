@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Human Screen Articles</h2>
+  {% if not finished %}
+    <!-- Progress Bar -->
+    <div class="mb-3">
+      <div class="progress" style="height: 24px;">
+        <div class="progress-bar" role="progressbar" style="width: {{ (index / total * 100)|round(0) }}%;" aria-valuenow="{{ index }}" aria-valuemin="0" aria-valuemax="{{ total }}">
+          {{ index }} / {{ total }}
+        </div>
+      </div>
+    </div>
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">{{ article.title or 'No title' }}</h5>
+        <p class="card-text">{{ article.description or 'No description' }}</p>
+        <ul class="list-unstyled mb-2">
+          {% if article.source and article.source.name %}
+            <li><strong>Source:</strong> {{ article.source.name }}</li>
+          {% endif %}
+          {% if article.publishedAt %}
+            <li><strong>Date:</strong> {{ article.publishedAt[:10] }}</li>
+          {% endif %}
+        </ul>
+        {% if article.url %}
+          <a href="{{ article.url }}" target="_blank" class="btn btn-link">Read Full Article</a>
+        {% endif %}
+        <form method="post" class="mt-4" id="screen-form">
+          <div class="btn-group" role="group">
+            <button name="action" value="accept" class="btn btn-success">Accept</button>
+            <button name="action" value="reject" class="btn btn-danger ms-2">Reject</button>
+            <button name="action" value="finish" class="btn btn-secondary ms-2">Finish</button>
+            <button name="action" value="back" class="btn btn-outline-primary ms-2" {% if index == 1 %}disabled{% endif %}>Back</button>
+          </div>
+        </form>
+        <!-- Loading spinner (hidden by default) -->
+        <div id="loading-spinner" class="text-center mt-4" style="display:none;">
+          <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <div class="mt-2">Generating your briefing, please wait...</div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Show spinner and hide form on submit
+      document.getElementById('screen-form').addEventListener('submit', function() {
+        document.getElementById('screen-form').style.display = 'none';
+        document.getElementById('loading-spinner').style.display = 'block';
+      });
+    </script>
+  {% else %}
+    <div class="alert alert-info">
+      <h4 class="alert-heading">Screening Complete!</h4>
+      <p>You accepted {{ accepted_articles|length }} out of {{ total }} articles.</p>
+      {% if error %}
+        <div class="alert alert-warning mt-3">{{ error }}</div>
+      {% endif %}
+    </div>
+    {% if accepted_articles %}
+      <h5>Accepted Articles:</h5>
+      <ul class="list-group mb-4">
+        {% for art in accepted_articles %}
+          <li class="list-group-item">
+            <strong>{{ art.title or 'No title' }}</strong><br>
+            <span class="text-muted">{{ art.description or '' }}</span><br>
+            {% if art.url %}
+              <a href="{{ art.url }}" target="_blank">Read Full Article</a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% if result %}
+      <div class="alert alert-success">
+        <h5>Your briefing is ready!</h5>
+        <ul>
+          <li>
+            <a href="{{ url_for('main.download_file', filename=result.markdown) }}">Download Markdown</a>
+            | <a href="{{ url_for('main.view_file', filename=result.markdown) }}" target="_blank">View</a>
+          </li>
+          <li>
+            <a href="{{ url_for('main.download_file', filename=result.html) }}">Download HTML</a>
+            | <a href="{{ url_for('main.view_file', filename=result.html) }}" target="_blank">View</a>
+          </li>
+          <li>
+            <a href="{{ url_for('main.download_file', filename=result.pdf) }}">Download PDF</a>
+            | <a href="{{ url_for('main.view_file', filename=result.pdf) }}" target="_blank">View</a>
+          </li>
+        </ul>
+      </div>
+    {% endif %}
+    <a href="{{ url_for('main.home') }}" class="btn btn-primary">Back to Home</a>
+  {% endif %}
+</div>
+{% endblock %} 
