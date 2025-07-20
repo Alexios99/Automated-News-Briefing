@@ -1,0 +1,508 @@
+<html><head><title>COMPANY Weekly Market Briefing – 2025-07-20</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: #ffffff;
+            color: #1f2937;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        
+        .document-container {
+            max-width: 210mm;
+            margin: 0 auto;
+            background: white;
+            min-height: 297mm;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #065f46 0%, #0891b2 50%, #1e40af 100%);
+            color: white;
+            padding: 40px 32px 32px 32px;
+            position: relative;
+        }
+
+        .watermark {
+            position: fixed;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 120px;
+            color: #065f46;
+            opacity: 0.08;
+            font-weight: 900;
+            pointer-events: none;
+            z-index: 9999;
+            white-space: nowrap;
+            user-select: none;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #10b981, #06b6d4, #3b82f6);
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        
+        .logo-section img {
+            max-height: 60px;
+            width: auto;
+        }
+        
+        .document-info {
+            text-align: right;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .briefing-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .briefing-subtitle {
+            font-size: 16px;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+        
+        .briefing-date {
+            font-size: 14px;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+        
+        .executive-summary {
+            background: linear-gradient(135deg, #f0fdf4 0%, #f0f9ff 100%);
+            border-left: 4px solid #059669;
+            border-right: 4px solid #0891b2;
+            margin: 32px 32px 40px 32px;
+            padding: 24px 28px;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .executive-summary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #059669, #0891b2);
+        }
+        
+        .executive-summary h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #065f46;
+            margin-bottom: 12px;
+        }
+        
+        .executive-summary p {
+            color: #374151;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        
+        .articles-section {
+            padding: 0 32px 32px 32px;
+        }
+        
+        .section-header {
+            font-size: 20px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #065f46, #0891b2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 24px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid transparent;
+            border-image: linear-gradient(90deg, #10b981, #06b6d4) 1;
+        }
+        
+        .article-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(5, 95, 70, 0.08);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .article-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #10b981, #06b6d4);
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .article-number {
+            background: linear-gradient(135deg, #059669, #0891b2);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            flex-shrink: 0;
+            margin-right: 16px;
+            box-shadow: 0 2px 4px rgba(5, 95, 70, 0.2);
+        }
+        
+        .article-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            line-height: 1.4;
+            margin: 0;
+            flex-grow: 1;
+        }
+        
+        .article-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .meta-row {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+        }
+        
+        .meta-label {
+            font-weight: 500;
+            color: #059669;
+            flex-shrink: 0;
+        }
+        
+        .meta-value {
+            color: #374151;
+        }
+        
+        .sentiment-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .sentiment-positive {
+            background: linear-gradient(135deg, #dcfce7, #d1fae5);
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        
+        .sentiment-positive::before {
+            content: '●';
+            color: #10b981;
+        }
+        
+        .sentiment-neutral {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            color: #0c4a6e;
+            border: 1px solid #0891b2;
+        }
+        
+        .sentiment-neutral::before {
+            content: '●';
+            color: #0891b2;
+        }
+        
+        .sentiment-negative {
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        
+        .sentiment-negative::before {
+            content: '●';
+            color: #ef4444;
+        }
+        
+        .article-summary {
+            color: #374151;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        
+        .article-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #059669, #0891b2);
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13px;
+            padding: 10px 18px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(5, 95, 70, 0.2);
+        }
+        
+        .article-link::after {
+            content: '→';
+            transition: transform 0.2s ease;
+        }
+        
+        .article-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(5, 95, 70, 0.3);
+        }
+        
+        .article-link:hover::after {
+            transform: translateX(2px);
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #f0fdf4 0%, #f0f9ff 100%);
+            border-top: 3px solid transparent;
+            border-image: linear-gradient(90deg, #10b981, #06b6d4) 1;
+            padding: 24px 32px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: #065f46;
+        }
+        
+        .footer-copyright {
+            font-size: 11px;
+            color: #6b7280;
+        }
+        
+        .page-break {
+            page-break-before: always;
+        }
+        
+        @media print {
+            .article-card {
+                break-inside: avoid;
+            }
+        }
+        .fund-performance-section {
+            margin: 32px 32px 40px 32px;
+            padding: 24px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .performance-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .perf-card {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .perf-card.best { border-left: 4px solid #10b981; }
+        .perf-card.worst { border-left: 4px solid #ef4444; }
+
+        .fund-tables {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .fund-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .fund-table th, .fund-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .discount-positive { color: #059669; font-weight: 600; }
+        .discount-negative { color: #dc2626; font-weight: 600; }
+    </style>
+    </head><body>
+<div class="document-container">
+<div class="watermark">DRAFT</div>
+<div class="header">
+<div class="header-content">
+<div class="logo-section">
+<img src="images/logo.png" alt="Logo" />
+</div>
+<div class="document-info">
+<div>Report Date: 2025-07-20</div>
+</div>
+</div>
+<div class="briefing-title">Weekly Market Briefing</div>
+<div class="briefing-date">Week Ending 2025-07-20</div>
+</div>
+<div class="executive-summary">
+<h2>Weekly Summary</h2>
+<p>This week's briefing examines the increasingly complex landscape of sustainable finance amidst shifts in regulatory approaches and emerging market dynamics. The UK's abandonment of its green investment certification framework underscores the growing need for enhanced due diligence, while the G20, under South Africa's leadership, is poised to prioritize sustainable finance initiatives tailored to the Global South, potentially unlocking new investment opportunities. Furthermore, the growing recognition of seabed mapping highlights the importance of robust data for informed blue economy investments. However, proposed cuts to European fisheries funding signal a potential setback for sustainable fishing practices, demanding careful consideration of ESG implications within investment portfolios. Looking ahead, investors must proactively navigate these evolving policies and data gaps to ensure the integrity and impact of their sustainable investments.</p>
+</div>
+<div class="articles-section">
+<h2 class="section-header">COMPANY Intelligence</h2>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">1</div>
+<h3 class="article-title">Britain drops plans for sustainable finance taxonomy. Is Canada next?</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">Biztoc.com</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-07-18T08:16:27Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-positive">Positive Impact</div>
+<div class="article-summary"><p>Here's a summary of the news article for institutional investors in sustainable finance:</p>
+<ul>
+<li><strong>Shift in Green Standard Landscape:</strong> The UK's decision to abandon its green investment certification guidebook creates uncertainty regarding global standardization of sustainable investment definitions and potentially hinders cross-border green capital flows.</li>
+<li><strong>Implications for Canadian Green Finance:</strong> Canada's similar efforts to adopt a green investment guidebook are now under greater scrutiny, potentially influencing the pace and ambition of its sustainable finance regulatory framework.</li>
+<li><strong>Increased Due Diligence Required:</strong> Institutional investors will need to enhance their own due diligence processes to assess the environmental credentials of investments, as reliance on government-backed green certifications may be less reliable.</li>
+</ul>
+<p>Topic: Regulatory &amp; Policy
+Mentioned Companies: None</p></div>
+<a class="article-link" href="https://biztoc.com/x/62ac74e939b2d9b8" target="_blank">Read Full Article</a>
+</div>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">2</div>
+<h3 class="article-title">G-20 Tries to Keep Agenda On Course in Face of Trump’s Trade War</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">Financial Post</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-07-17T17:00:44Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-negative">Negative Impact</div>
+<div class="article-summary"><ul>
+<li><strong>Focus on Global South:</strong> The G20, hosted by South Africa, is likely to prioritize sustainable finance initiatives tailored to the needs and contexts of developing economies within the Global South. This signals potential investment opportunities and risk factors unique to these markets.</li>
+<li><strong>Policy Alignment:</strong> Institutional investors should monitor the G20's discussions on harmonizing sustainable finance taxonomies and disclosure standards across different jurisdictions. This will impact cross-border investment strategies and risk management.</li>
+<li><strong>Climate Finance Mobilization:</strong> The G20's commitment to mobilizing climate finance, particularly for adaptation and mitigation efforts in emerging markets, could unlock new investment avenues for institutional investors seeking impact and returns.</li>
+</ul>
+<p>Topic: Regulatory &amp; Policy</p>
+<p>Mentioned Companies: None</p></div>
+<a class="article-link" href="https://financialpost.com/pmn/business-pmn/g-20-tries-to-keep-agenda-on-course-in-face-of-trumps-trade-war" target="_blank">Read Full Article</a>
+</div>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">3</div>
+<h3 class="article-title">UKHO highlights role of seabed mapping in enabling ocean action</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">Www.gov.uk</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-07-17T14:25:30Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-positive">Positive Impact</div>
+<div class="article-summary"><ul>
+<li><strong>Growing Recognition of Seabed Mapping's Importance:</strong> The article highlights the increasing awareness of seabed mapping as a crucial foundation for sustainable marine activities and informed ocean resource management. This underscores the need for institutional investors to consider seabed mapping initiatives when evaluating investments in the blue economy.</li>
+<li><strong>Opportunities for Investment in Marine Sustainability:</strong> The emphasis on safer navigation, sustainable development, and smarter decision-making opens potential avenues for institutional investors to allocate capital towards projects and technologies that contribute to comprehensive seabed mapping.</li>
+<li><strong>Informing Investment Decisions:</strong> Seabed mapping offers vital data for more informed investment decisions in sectors reliant on ocean resources, enabling a more accurate assessment of environmental impact and long-term sustainability.</li>
+</ul>
+<p>Topic: Market Trends</p>
+<p>Mentioned Companies: None</p></div>
+<a class="article-link" href="https://www.gov.uk/government/news/ukho-highlights-role-of-seabed-mapping-in-enabling-ocean-action" target="_blank">Read Full Article</a>
+</div>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">4</div>
+<h3 class="article-title">Commission’s EU budget plan delivers major blow to fisheries</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">EURACTIV</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-07-17T14:02:59Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-negative">Negative Impact</div>
+<div class="article-summary"><ul>
+<li><strong>Significant Reduction in Fisheries Funding:</strong> The European Commission's proposed two-thirds cut to fisheries funding raises concerns about the EU's commitment to sustainable fishing practices and marine ecosystem health, potentially impacting investment decisions related to aquaculture and fishing industries.</li>
+<li><strong>Increased Investment Risk:</strong> The funding reduction introduces uncertainty and potential financial risk for institutional investors who have already allocated capital to sustainable fisheries or are considering future investments in the sector, as it may hinder the ability to meet environmental and social governance (ESG) targets.</li>
+<li><strong>Reputational and Compliance Implications:</strong> For institutional investors with ESG mandates, this development may lead to increased scrutiny of their portfolios related to fisheries. It could necessitate adjustments to investment strategies to ensure alignment with evolving regulatory and sustainability standards.</li>
+</ul>
+<p>Topic: Regulatory &amp; Policy
+Mentioned Companies: None</p></div>
+<a class="article-link" href="https://www.euractiv.com/section/agriculture-food/news/commissions-eu-budget-plan-delivers-major-blow-to-fisheries/" target="_blank">Read Full Article</a>
+</div>
+</div>
+<div class="footer">
+<div class="footer-content">
+<div>COMPANY</div>
+<div>Generated on 2025-07-20</div>
+</div>
+<div class="footer-copyright">&copy; COMPANY</div>
+</div>
+</div>
+</body></html>
