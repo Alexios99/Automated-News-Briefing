@@ -1,18 +1,29 @@
 {% extends 'base.html' %}
 {% block title %}Fund News{% endblock %}
 {% block content %}
-<h2>Fund News</h2>
-<button id="update-fund-news" class="btn btn-primary mb-3">Update Fund News</button>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Fund News</h2>
+    <div>
+        <button id="update-fund-news" class="btn btn-primary">Update Fund News</button>
+    </div>
+</div>
+{% if last_updated %}
+<p class="text-muted">Last updated: {{ last_updated }}</p>
+{% endif %}
 <div id="update-status" class="mb-3" style="display:none;"></div>
-<ul id="news-list">
+
+<ul class="list-group">
   {% for article in news %}
-    <li>
+    <li class="list-group-item">
       <a href="{{ article['url'] }}" target="_blank">{{ article['title'] }}</a>
       <br>
-      <small>{{ article.get('published_at', article.get('publishedAt', '')) }}</small>
+      <small class="text-muted">{{ article.get('published_at', article.get('publishedAt', '')) }} - Source: {{ article.get('source', 'N/A') }}</small>
     </li>
+  {% else %}
+    <li class="list-group-item">No news available.</li>
   {% endfor %}
 </ul>
+
 <script>
   document.getElementById('update-fund-news').addEventListener('click', function() {
     var status = document.getElementById('update-status');

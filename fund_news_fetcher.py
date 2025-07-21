@@ -159,8 +159,10 @@ def fetch_news_for_funds(csv_path: str = "data/listed_funds_symbols_news.csv", o
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(all_news, f, ensure_ascii=False, indent=2)
         print(f"All news saved to {output_path}")
+        return len(new_articles)
     except Exception as e:
         print(f"Error fetching news: {e}")
+        raise
 
 if __name__ == "__main__":
     import sys

@@ -3,6 +3,7 @@ from .forms import GenerateBriefingForm
 from main import run_pipeline, fetch_articles_for_briefing, generate_briefing_from_articles
 import os
 import re
+from datetime import datetime
 from .utils import list_briefings, load_config, save_config, reset_config
 from fund_news_fetcher import fetch_news_for_funds
 import json
@@ -182,19 +183,28 @@ def delete_briefing_group(group_key):
 @main.route('/update_fund_news', methods=['POST'])
 def update_fund_news():
     try:
-        fetch_news_for_funds()
-        return jsonify({'success': True, 'message': 'Fund news updated.'})
+        new_articles_count = fetch_news_for_funds()
+        message = f"Fund news updated. Found {new_articles_count} new articles."
+        if new_articles_count == 0:
+            message = "Fund news is already up-to-date. No new articles found."
+        return jsonify({'success': True, 'message': message})
     except Exception as e:
         return jsonify({'success': False, 'message': f'Error updating fund news: {str(e)}'}), 500
 
 @main.route('/fund_news', methods=['GET'])
 def fund_news():
+    news_path = 'data/marketaux_news_results.json'
+    last_updated = None
+    if os.path.exists(news_path):
+        last_updated_ts = os.path.getmtime(news_path)
+        last_updated = datetime.fromtimestamp(last_updated_ts).strftime('%Y-%m-%d %H:%M:%S')
+
     try:
-        with open('data/marketaux_news_results.json', 'r', encoding='utf-8') as f:
+        with open(news_path, 'r', encoding='utf-8') as f:
             news = json.load(f)
     except Exception:
         news = []
-    return render_template('fund_news.html', news=news)
+    return render_template('fund_news.html', news=news, last_updated=last_updated)
 
 @main.route('/create_briefing_from_fund_news', methods=['GET', 'POST'])
 def create_briefing_from_fund_news():
