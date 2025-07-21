@@ -1,5 +1,18 @@
 # Automated News Briefing
 
+## Quick Start
+
+**Windows:**
+- Double-click `start_app.bat` to launch the app. (It will set up everything for you.)
+
+**Mac:**
+- Open Terminal, run `chmod +x start_app.command` once to make it executable.
+- Then double-click `start_app.command` to launch the app.
+
+The app will open in your browser at [http://127.0.0.1:5000](http://127.0.0.1:5000).
+
+---
+
 ## Overview
 
 Automated News Briefing is a powerful, dual-pipeline platform for fetching, analyzing, and summarizing news articles, designed for institutional investors and financial professionals. It provides concise, actionable insights through briefings in Markdown, HTML, and PDF formats. The system integrates multiple news APIs, advanced web scraping, machine learning, and custom logic to deliver high-quality summaries, sentiment analysis, and categorization, with both automated and human-in-the-loop workflows.
@@ -79,13 +92,13 @@ Automated News Briefing is a powerful, dual-pipeline platform for fetching, anal
 ### Step 1: Download the Project
 
 - **Option A: Download ZIP**
-  - Go to the [GitHub repository page](https://github.com/your-repo/automated-news-briefing).
+  - Go to the [GitHub repository page](https://github.com/Alexios99/automated-news-briefing).
   - Click the green "Code" button, then "Download ZIP".
   - Unzip the downloaded file on your computer.
 
 - **Option B: Use Git (for advanced users)**
   ```sh
-  git clone https://github.com/your-repo/automated-news-briefing.git
+  git clone https://github.com/Alexios99/automated-news-briefing.git
   cd automated-news-briefing
   ```
 
@@ -135,3 +148,48 @@ Once you've completed the initial setup, you don't need to run `setup.py` again.
   source venv/bin/activate
   python app.py
   ```
+
+---
+
+## Troubleshooting
+
+**Python not found:**
+- Make sure Python 3.8 or higher is installed. Download from [python.org](https://www.python.org/downloads/).
+
+**App won’t open in browser:**
+- Open your browser and go to [http://127.0.0.1:5000](http://127.0.0.1:5000) manually.
+
+**Port 5000 already in use:**
+- Close any other app using that port, or change the port in `app.py` (advanced users).
+
+**API key errors:**
+- Double-check your API keys in `config.json`. You can re-run the setup script to enter them again.
+
+**Other issues:**
+- Check for error messages in the terminal window. If you need help, see the Contact section below.
+
+---
+
+## FAQ
+
+**Q: Do I need an internet connection?**
+A: Yes, for setup and to fetch news.
+
+**Q: Where do I get API keys?**
+A: See the instructions in the README above for NewsAPI, Google Generative AI, and MarketAux.
+
+**Q: How do I update the app?**
+A: Download the latest version from GitHub and replace your files (except your `config.json` and `output/` folder).
+
+**Q: How do I uninstall?**
+A: Delete the project folder. Optionally, delete the `venv` folder to remove the virtual environment.
+
+**Q: Can I use the app on another computer?**
+A: Yes! Just copy the project folder and run the startup script on the new machine.
+
+---
+
+## Contact / Support
+
+- For help, open an issue on [GitHub](https://github.com/Alexios99/automated-news-briefing/issues) or email [alexios0905@gmail.com](mailto:alexios0905@gmail.com).
+- Please include any error messages or screenshots to help diagnose your issue.

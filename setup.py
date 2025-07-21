@@ -96,11 +96,19 @@ def configure_application():
         else:
             print("✓ API keys are already configured.")
 
-def launch_application():
+def launch_application(first_run=False):
     """Launches the Flask web application."""
     print("\n-----------------------------------------------------")
-    print("Setup complete. Launching the web application...")
-    print("Access it at: http://127.0.0.1:5000")
+    if first_run:
+        print("🎉 Welcome! Setup is complete.")
+        print("You can now use Automated News Briefing in your browser.")
+        print("App URL: http://127.0.0.1:5000")
+        print("If your browser doesn't open automatically, copy and paste the URL above.")
+        print("\nTip: Your API keys are saved in config.json. Keep them safe!")
+        print("For help, see the README (Troubleshooting/FAQ) or contact support.")
+    else:
+        print("Setup complete. Launching the web application...")
+        print("Access it at: http://127.0.0.1:5000")
     print("Press CTRL+C in this window to stop the server.")
     print("-----------------------------------------------------")
     
@@ -119,4 +127,4 @@ if __name__ == "__main__":
     install_dependencies()
     install_playwright_browsers()
     configure_application()
-    launch_application() 
+    launch_application(first_run=True) 
