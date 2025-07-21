@@ -1,72 +1,35 @@
 {% extends 'base.html' %}
 {% block title %}View Briefings{% endblock %}
 {% block content %}
-<h2 class="mb-4">All Briefings</h2>
-<div id="alert-area"></div>
-{% if briefings_by_date %}
-<table class="table table-hover align-middle">
-  <thead class="table-light">
-    <tr>
-      <th>Briefing Name</th>
-      <th>Date</th>
-      <th class="text-center">Downloads</th>
-      <th style="width: 50px;"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for group_key, briefing in briefings_by_date.items() %}
-    <tr id="row-{{ group_key }}">
-      <td><strong>{{ briefing.name }}</strong></td>
-      <td>{{ briefing.datetime.strftime('%d %b %Y') }}</td>
-      <td class="text-center">
-        {% if 'html' in briefing.files %}
-          <a href="{{ url_for('main.view_file', filename=briefing.files['html']) }}" class="btn btn-sm btn-outline-primary" title="View HTML" target="_blank">HTML</a>
-        {% endif %}
-        {% if 'pdf' in briefing.files %}
-          <a href="{{ url_for('main.download_file', filename=briefing.files['pdf']) }}" class="btn btn-sm btn-outline-danger" title="Download PDF">PDF</a>
-        {% endif %}
-        {% if 'md' in briefing.files %}
-          <a href="{{ url_for('main.download_file', filename=briefing.files['md']) }}" class="btn btn-sm btn-outline-secondary" title="Download Markdown">MD</a>
-        {% endif %}
-      </td>
-      <td>
-        <button class="btn btn-sm btn-danger delete-briefing" data-group-key="{{ group_key }}" title="Delete all files for this briefing">
-          &times;
-        </button>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% else %}
-<p class="text-center text-muted">No briefings found.</p>
-{% endif %}
+<div class="container">
+    <h2>All Briefings</h2>
+    <p>Here you can view and download all previously generated briefings.</p>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-function showAlert(message, type) {
-  $('#alert-area').html(`<div class="alert alert-${type} alert-dismissible fade show" role="alert">${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`);
-}
-
-$('.delete-briefing').click(function() {
-  const groupKey = $(this).data('group-key');
-  if (confirm('Are you sure you want to delete all files for this briefing?')) {
-    $.ajax({
-      url: `/delete_briefing/${groupKey}`,
-      method: 'POST',
-      success: function(resp) {
-        if (resp.success) {
-          $(`#row-${groupKey}`).fadeOut(300, function() { $(this).remove(); });
-          showAlert('Briefing deleted successfully.', 'success');
-        } else {
-          showAlert(resp.error || 'Error deleting briefing.', 'danger');
-        }
-      },
-      error: function() {
-        showAlert('An unexpected error occurred.', 'danger');
-      }
-    });
-  }
-});
-</script>
+    {% if briefings_by_date %}
+        <ul class="list-group">
+            {% for group_key, briefing in briefings_by_date.items() %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ briefing.name }}</strong>
+                    </div>
+                    <div>
+                        {% if 'html' in briefing.files %}
+                            <a href="{{ url_for('main.view_file', filename=briefing.files.html) }}" class="btn btn-sm btn-outline-primary">View HTML</a>
+                        {% endif %}
+                        {% if 'pdf' in briefing.files %}
+                            <a href="{{ url_for('main.download_file', filename=briefing.files.pdf) }}" class="btn btn-sm btn-outline-success">Download PDF</a>
+                        {% endif %}
+                        {% if 'md' in briefing.files %}
+                            <a href="{{ url_for('main.download_file', filename=briefing.files.md) }}" class="btn btn-sm btn-outline-secondary">Download MD</a>
+                        {% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            No briefings have been generated yet.
+        </div>
+    {% endif %}
+</div>
 {% endblock %} 

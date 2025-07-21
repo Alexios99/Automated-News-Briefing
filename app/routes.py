@@ -7,6 +7,7 @@ from datetime import datetime
 from .utils import list_briefings, load_config, save_config, reset_config
 from fund_news_fetcher import fetch_news_for_funds
 import json
+import pandas as pd
 
 main = Blueprint('main', __name__)
 
@@ -17,7 +18,27 @@ FILENAME_RE = re.compile(r'^briefing_\d{4}-\d{2}-\d{2}(_[\w-]+)?\.(pdf|html|md)$
 
 @main.route('/')
 def home():
-    return render_template('index.html')
+    # Fetch recent briefings
+    all_briefings = list_briefings() # This is a dict
+    
+    # Sort briefings by datetime object, already provided by list_briefings
+    # The list_briefings function now returns a sorted dict, but we'll sort here just in case.
+    sorted_briefings = sorted(all_briefings.values(), key=lambda x: x['datetime'], reverse=True)
+    recent_briefings = sorted_briefings[:5]
+
+    # Fetch fund performance data
+    fund_performance = None
+    try:
+        fund_df = pd.read_csv('data/fund_analysis_results.csv')
+        # Sort by discount
+        fund_df_sorted = fund_df.sort_values('Discount (%)', ascending=False)
+        fund_performance = {
+            'all_funds': fund_df_sorted.to_dict('records')
+        }
+    except Exception as e:
+        print(f"Could not load fund performance data for dashboard: {e}")
+
+    return render_template('index.html', recent_briefings=recent_briefings, fund_performance=fund_performance)
 
 @main.route('/generate', methods=['GET', 'POST'])
 def generate():
