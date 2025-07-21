@@ -22,7 +22,7 @@ mock_response = {
             "description": "New regulations support sustainable fishing practices.",
             "url": "https://example.com/article2",
             "publishedAt": "2025-06-17T08:30:00Z"
-        }
+        },
         {
             "source": {"name": "ColumbiaThreadneedle"}, #MakeTest
             "author": "Jane Doe",
@@ -57,7 +57,7 @@ def test_fetch_articles_success(monkeypatch):
 
     articles = news_fetcher.fetch_articles(["climate", "sustainable"], from_days_ago=3)
     assert isinstance(articles, list)
-    assert len(articles) == 2
+    assert len(articles) == 3
     assert articles[0]["title"] == "Sustainable Bonds See Record Inflows"
 
 def test_fetch_articles_failure(monkeypatch):

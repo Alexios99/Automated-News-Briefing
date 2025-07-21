@@ -14,4 +14,13 @@ Flask>=2.0
 Flask-WTF>=1.0
 WTForms>=3.0
 Flask-Session
+playwright>=1.44
+playwright-stealth
+readability-lxml
+trafilatura
+httpx[http2]
+tenacity
+structlog
+# After installing requirements, run:
+#   playwright install
 

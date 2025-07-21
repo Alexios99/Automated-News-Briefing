@@ -6,6 +6,7 @@ from formatter import generate_markdown, generate_html, generate_pdf
 @pytest.fixture
 def sample_briefing():
     return {
+        "title": "SAFL End of Week Briefing",
         "date": "2025-06-18",
         "intro": "This week's sustainable finance update...",
         "articles": [
@@ -31,8 +32,9 @@ def test_generate_markdown_file(tmp_path, sample_briefing):
 
 
 def test_generate_html_structure(sample_briefing):
-    html = generate_html(sample_briefing)
-    assert html.startswith("<html>")
+    html = generate_html(sample_briefing, logo_path=None)
+    assert '<div class="briefing-title">' in html
+    assert "<h2>" in html
     assert "Green bonds rise" in html
     assert "SAFL End of Week Briefing" in html
 
@@ -46,6 +48,6 @@ def test_generate_html_with_logo_path(tmp_path, sample_briefing):
 
 def test_generate_pdf_output(tmp_path, sample_briefing):
     pdf_path = tmp_path / "briefing.pdf"
-    generate_pdf(sample_briefing, output_path=str(pdf_path))
+    generate_pdf(sample_briefing, output_path=str(pdf_path), logo_path=None)
     assert pdf_path.exists()
-    assert pdf_path.stat().st_size > 0
+    assert pdf_path.stat().st_size > 1000  # check that file is not empty

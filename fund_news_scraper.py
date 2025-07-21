@@ -1,21 +1,52 @@
 import json
 import os
-from newspaper import Article
+from newspaper import Article, Config
 from time import sleep
+import requests
+from bs4 import BeautifulSoup
+from readability import Document
 
 INPUT_PATH = 'data/marketaux_news_results.json'
 OUTPUT_PATH = 'data/marketaux_news_with_content.json'
 
 
 def fetch_article_content(url):
+    user_agent = (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/122.0.0.0 Safari/537.36"
+    )
+    # First try newspaper3k
     try:
-        article = Article(url)
+        config = Config()
+        config.browser_user_agent = user_agent
+        article = Article(url, config=config)
         article.download()
         article.parse()
-        return article.text
+        if article.text and len(article.text.strip()) > 200:
+            print(f"[newspaper3k] Success: {url}")
+            return article.text
+        else:
+            print(f"[newspaper3k] Empty or too short, will try fallback: {url}")
     except Exception as e:
-        print(f"Error fetching article at {url}: {e}")
-        return None
+        print(f"[newspaper3k] Error fetching article at {url}: {e}")
+    # Fallback: requests + BeautifulSoup + readability-lxml
+    try:
+        headers = {"User-Agent": user_agent}
+        resp = requests.get(url, headers=headers, timeout=15)
+        resp.raise_for_status()
+        doc = Document(resp.text)
+        summary_html = doc.summary()
+        soup = BeautifulSoup(summary_html, "lxml")
+        text = soup.get_text(separator="\n", strip=True)
+        if text and len(text.strip()) > 200:
+            print(f"[readability-lxml] Success: {url}")
+            return text
+        else:
+            print(f"[readability-lxml] Extracted text too short: {url}")
+    except Exception as e:
+        print(f"[readability-lxml] Error fetching article at {url}: {e}")
+    return None
 
 def main():
     if not os.path.exists(INPUT_PATH):

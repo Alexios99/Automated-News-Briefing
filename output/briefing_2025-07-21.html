@@ -1,92 +1,4 @@
-import os
-from typing import Dict, Any, Optional
-import markdown2
-import markdown
-from playwright.sync_api import sync_playwright
-import tempfile
-
-
-def generate_markdown(briefing: Dict, output_path: str) -> None:
-    """Converts a structured briefing dict to a Markdown (.md) file."""
-    lines = []
-    lines.append(f"# COMPANY End of Week Briefing – {str(briefing.get('date', ''))}")
-    lines.append("")
-    lines.append(f"_{str(briefing.get('intro', ''))}_")
-    lines.append("\n---\n")
-
-    lines.append("## 🔍 Article Highlights\n")
-    for i, article in enumerate(briefing["articles"], 1):
-        lines.append(f"### {i}. {str(article.get('title', ''))}")
-        lines.append(f"**Source:** {str(article.get('source', ''))} | **Date:** {str(article.get('date', ''))}")
-        lines.append(f"[Read full article]({str(article.get('url', ''))})\n")
-
-        lines.append(f"**Sentiment:** {str(article.get('sentiment', '')).capitalize()}")
-        lines.append("")
-        lines.append(str(article.get("summary", "")))
-        lines.append("\n---\n")
-
-    # Write Markdown to file
-    with open(output_path, "w") as f:
-        f.write("\n".join(lines))
-
-
-def generate_pdf(briefing: Dict, output_path: str, logo_path) -> None:
-    """
-    Renders briefing as a PDF using a headless Chromium browser via Playwright.
-    Args:
-        briefing (Dict): The structured briefing data.
-        output_path (str): Destination path for the generated PDF.
-        logo_path (str): Optional path to a local logo image used in the HTML.
-    """
-    html_content = generate_html(briefing, logo_path or "")
-    with tempfile.TemporaryDirectory() as temp_dir:
-        html_file_path = os.path.join(temp_dir, "briefing.html")
-
-        # Replace logo path with absolute path if provided
-        if logo_path:
-            html_content = html_content.replace(str(logo_path), f"file://{os.path.abspath(logo_path)}")
-
-        # Save HTML to temp file
-        with open(html_file_path, "w", encoding="utf-8") as f:
-            f.write(html_content)
-
-        with sync_playwright() as p:
-            browser = p.chromium.launch()
-            page = browser.new_page()
-            page.goto(f"file://{html_file_path}", wait_until="load")
-            page.pdf(path=output_path, format="A4", print_background=True)
-            browser.close()
-
-
-def generate_fund_performance_section(fund_data_path: str) -> Optional[Dict[str, Any]]:
-    """Generate HTML/Markdown for fund performance data"""
-    try:
-        import pandas as pd
-        df = pd.read_csv(fund_data_path)
-        
-        # Sort by discount % (best to worst performing)
-        df_sorted = df.sort_values('Discount (%)', ascending=False)
-        
-        # Categorize funds by discount levels
-        best_performers = df_sorted[df_sorted['Discount (%)'] > -30]  # Less than 15% discount
-        worst_performers = df_sorted[df_sorted['Discount (%)'] < -30]  # More than 30% discount
-        
-        return {
-            'best_performers': best_performers.to_dict('records'), # type: ignore
-            'worst_performers': worst_performers.to_dict('records'), # type: ignore
-        }
-    except Exception as e:
-        print(f"Error processing fund data: {e}")
-        return None
-
-
-
-
-
-def generate_html(briefing: Dict, logo_path) -> str:
-    """Converts a structured briefing dict to a modern, professional HTML string for PDF output."""
-    logo_path = logo_path or ""
-    style = '''
+<html><head><title></title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -478,111 +390,62 @@ def generate_html(briefing: Dict, logo_path) -> str:
         .discount-positive { color: #059669; font-weight: 600; }
         .discount-negative { color: #dc2626; font-weight: 600; }
     </style>
-    '''
-    
-    lines = []
-    lines.append(f"<html><head><title>{str(briefing.get('title', ''))}</title>{style}</head><body>")
-    lines.append('<div class="document-container">')
-    lines.append('<div class="watermark">DRAFT</div>')
-    
-    # Header
-    lines.append('<div class="header">')
-    lines.append('<div class="header-content">')
-    lines.append('<div class="logo-section">')
-    if logo_path:
-        lines.append(f'<img src="{str(logo_path)}" alt="Logo" />')
-    lines.append('</div>')
-    lines.append('<div class="document-info">')
-    lines.append(f'<div>Report Date: {str(briefing.get("date", ""))}</div>')
-    lines.append('</div>')
-    lines.append('</div>')
-    lines.append(f'<div class="briefing-title">{str(briefing.get("title", "Weekly Market Briefing"))}</div>')
-    lines.append(f'<div class="briefing-date">Week Ending {str(briefing.get("date", ""))}</div>')
-    lines.append('</div>')
-    
-    # Executive Summary
-    lines.append('<div class="executive-summary">')
-    lines.append('<h2>Weekly Summary</h2>')
-    lines.append(f'<p>{str(briefing.get("intro", ""))}</p>')
-    lines.append('</div>')
-
-    # Fund Data
-    if briefing.get("fund_performance"):
-        fund_data = briefing["fund_performance"]
-        
-        lines.append('<div class="fund-performance-section">')
-        lines.append('<h2 class="section-header">📊 Listed Fund Performance Summary</h2>')
-        
-        # Top/Bottom performers tables
-        if fund_data.get("best_performers"):
-            lines.append('<div class="fund-tables">')
-            lines.append('<div class="fund-table-container">')
-            lines.append('<h3>🟢 Smallest Discounts</h3>')
-            lines.append('<table class="fund-table">')
-            lines.append('<tr><th>Fund</th><th>Price</th><th>NAV</th><th>Discount</th></tr>')
-            for fund in fund_data["best_performers"][:5]:  # Top 5
-                lines.append(f'<tr><td>{fund["Fund Name"]}</td><td>£{fund["Close Price"]:.2f}</td><td>£{fund["NAV"]:.2f}</td><td class="discount-positive">{fund["Discount (%)"]:.1f}%</td></tr>')
-            lines.append('</table>')
-            lines.append('</div>')
-        
-        if fund_data.get("worst_performers"):
-            lines.append('<div class="fund-table-container">')
-            lines.append('<h3>🔴 Largest Discounts</h3>')
-            lines.append('<table class="fund-table">')
-            lines.append('<tr><th>Fund</th><th>Price</th><th>NAV</th><th>Discount</th></tr>')
-            for fund in fund_data["worst_performers"][:5]:  # Bottom 5
-                lines.append(f'<tr><td>{fund["Fund Name"]}</td><td>£{fund["Close Price"]:.2f}</td><td>£{fund["NAV"]:.2f}</td><td class="discount-negative">{fund["Discount (%)"]:.1f}%</td></tr>')
-            lines.append('</table>')
-            lines.append('</div>')
-            lines.append('</div>')
-    
-    # Articles Section
-    lines.append('<div class="articles-section">')
-    lines.append('<h2 class="section-header">COMPANY Intelligence</h2>')
-    
-    for i, article in enumerate(briefing["articles"], 1):
-        sentiment = str(article.get('sentiment', '')).lower()
-        sentiment_label = 'Neutral'
-        sentiment_class = 'sentiment-neutral'
-        
-        if sentiment in ['pos', 'positive']:
-            sentiment_class = 'sentiment-positive'
-            sentiment_label = 'Positive'
-        elif sentiment in ['neg', 'negative']:
-            sentiment_class = 'sentiment-negative'
-            sentiment_label = 'Negative'
-        
-        lines.append('<div class="article-card">')
-        lines.append('<div class="article-header">')
-        lines.append(f'<div class="article-number">{i}</div>')
-        lines.append(f'<h3 class="article-title">{str(article.get("title", ""))}</h3>')
-        lines.append('</div>')
-        
-        lines.append('<div class="article-meta">')
-        lines.append('<div class="meta-row">')
-        lines.append(f'<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">{str(article.get("source", ""))}</span></div>')
-        lines.append(f'<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">{str(article.get("date", ""))}</span></div>')
-        lines.append('</div>')
-        lines.append('</div>')
-        
-        lines.append(f'<div class="sentiment-indicator {sentiment_class}">{sentiment_label} Impact</div>')
-        lines.append(f'<div class="article-summary">{markdown.markdown(str(article.get("summary", "")))}</div>')  
-        lines.append(f'<a class="article-link" href="{str(article.get("url", ""))}" target="_blank">Read Full Article</a>')
-        lines.append('</div>')
-    
-    lines.append('</div>')
-    
-    # Footer
-    lines.append('<div class="footer">')
-    lines.append('<div class="footer-content">')
-    lines.append('<div>COMPANY</div>')
-    lines.append(f'<div>Generated on {str(briefing.get("date", ""))}</div>')
-    lines.append('</div>')
-    lines.append('<div class="footer-copyright">&copy; COMPANY</div>')
-    lines.append('</div>')
-    
-    lines.append('</div>')
-    lines.append('</body></html>')
-    return "\n".join(lines)
-
-
+    </head><body>
+<div class="document-container">
+<div class="watermark">DRAFT</div>
+<div class="header">
+<div class="header-content">
+<div class="logo-section">
+<img src="images/logo.png" alt="Logo" />
+</div>
+<div class="document-info">
+<div>Report Date: 2025-07-21</div>
+</div>
+</div>
+<div class="briefing-title">Weekly Market Briefing</div>
+<div class="briefing-date">Week Ending 2025-07-21</div>
+</div>
+<div class="executive-summary">
+<h2>Weekly Summary</h2>
+<p>This week's briefing highlights the growing pains within the sustainable finance landscape, specifically examining the implications of the UK's decision to abandon its green investment certification guidebook. This policy reversal introduces significant uncertainty for institutional investors, necessitating more rigorous due diligence when comparing cross-jurisdictional green investments and potentially hindering capital flows into the UK's sustainable projects. As Canada considers similar standardization efforts, the absence of a unified global standard underscores the increasing need for nuanced risk assessment and proactive engagement with evolving regulatory frameworks for institutional investors seeking to effectively deploy capital in the green and blue economies.</p>
+</div>
+<div class="articles-section">
+<h2 class="section-header">COMPANY Intelligence</h2>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">1</div>
+<h3 class="article-title">Britain drops plans for sustainable finance taxonomy. Is Canada next?</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">Biztoc.com</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-07-18T08:16:27Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-positive">Positive Impact</div>
+<div class="article-summary"><p>Here's a summary focusing on the impact for institutional investors:</p>
+<ul>
+<li>
+<p><strong>Increased Uncertainty:</strong> The abandonment of the UK's green investment certification guidebook creates uncertainty for institutional investors who rely on clear standards to identify and allocate capital to sustainable investments, particularly those considering cross-border strategies involving UK assets.</p>
+</li>
+<li>
+<p><strong>Comparative Analysis &amp; Competitive Disadvantage:</strong> Institutional investors will need to conduct deeper due diligence when comparing green investments across different jurisdictions (e.g., UK vs. Canada), potentially disadvantaging UK-based or focused sustainable investment funds if Canada's efforts to adopt a similar standard also falter.</p>
+</li>
+<li>
+<p><strong>Impact on Sustainable Finance Flows:</strong> The lack of a standardized green certification in a major market like the UK could deter some institutional investors from deploying capital into UK-based sustainable projects, potentially affecting the overall growth of the UK's sustainable finance sector.</p>
+</li>
+</ul>
+<p>Topic: Regulatory &amp; Policy
+Mentioned Companies: None</p></div>
+<a class="article-link" href="https://biztoc.com/x/62ac74e939b2d9b8" target="_blank">Read Full Article</a>
+</div>
+</div>
+<div class="footer">
+<div class="footer-content">
+<div>COMPANY</div>
+<div>Generated on 2025-07-21</div>
+</div>
+<div class="footer-copyright">&copy; COMPANY</div>
+</div>
+</div>
+</body></html>
