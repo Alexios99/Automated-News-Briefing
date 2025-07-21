@@ -41,7 +41,7 @@ Automated News Briefing is a powerful, dual-pipeline platform for fetching, anal
 
 ---
 
-## Project Structure
+## Getting Started
 
 ```
 ├── app.py                  # Flask app entry point
@@ -76,108 +76,62 @@ Automated News Briefing is a powerful, dual-pipeline platform for fetching, anal
 └── README.md               # This file
 ```
 
----
+### Step 1: Download the Project
 
-## Installation
+- **Option A: Download ZIP**
+  - Go to the [GitHub repository page](https://github.com/your-repo/automated-news-briefing).
+  - Click the green "Code" button, then "Download ZIP".
+  - Unzip the downloaded file on your computer.
 
-1.  **Clone the repository**:
-    ```sh
-    git clone https://github.com/your-repo/automated-news-briefing.git
-    cd automated-news-briefing
-    ```
+- **Option B: Use Git (for advanced users)**
+  ```sh
+  git clone https://github.com/your-repo/automated-news-briefing.git
+  cd automated-news-briefing
+  ```
 
-2.  **Create and activate a virtual environment**:
-    ```sh
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
+### Step 2: Run the Setup Script
 
-3.  **Install Python dependencies**:
-    ```sh
-    pip install -r requirements.txt
-    ```
+The only file you need to run is `setup.py`. This will handle everything for you.
 
-4.  **Install Playwright browsers**:
-    After installing the pip packages, you must install the browser binaries for Playwright:
-    ```sh
-    playwright install
-    ```
+- **On Windows**:
+  - Find the `setup.py` file and double-click it.
+  - If that doesn't work, open Command Prompt, navigate to the project folder, and run: `python setup.py`
 
-5.  **Set up configuration**:
-    - Rename `config_default.json` to `config.json`.
-    - Edit `config.json` to add your API keys:
-        - `NEWS_API_KEY`: Your key from [NewsAPI](https://newsapi.org/).
-        - `GOOGLE_API_KEY`: Your key for [Google Generative AI](https://cloud.google.com/).
-        - `MARKETAUX_API_TOKEN`: Your token from [MarketAux](https://www.marketaux.com/).
-    - It is recommended to use environment variables for keys in production. The app will prioritize environment variables over `config.json`.
+- **On macOS / Linux**:
+  - Open your Terminal.
+  - Navigate to the project folder.
+  - Run the command: `python3 setup.py`
 
----
+The script will:
+1.  Check if your Python version is compatible.
+2.  Create a dedicated virtual environment for the project.
+3.  Install all the necessary packages.
+4.  Install the required web scraping browsers (this might take a moment).
+5.  Ask you to enter your API keys, which it will save for you.
 
-## Usage
+### Step 3: Use the Web App
 
-### 1. Web App (Recommended)
+Once the setup script is finished, it will automatically launch the web application.
 
-The web interface provides access to all features, including the interactive human screening process.
-
-Start the web server:
-```sh
-python app.py
-```
-
-Navigate to `http://127.0.0.1:5000` in your browser.
-
-- **Generate Briefing**: Use the form on the "Generate" page to fetch news by keywords. You will then be guided through the human screening process.
-- **Update Fund News**: Go to the "Fund News" page and click the "Update" button to fetch the latest articles for your tracked funds.
-- **Create Custom Briefing**: From the "Fund News" page, select specific articles and generate a custom briefing.
-- **Manage Configuration**: Use the "Configure" page to manage API keys.
-
-### 2. Command-Line
-
-The CLI is suitable for automated runs of the general news pipeline. Note that the CLI does not support the human screening step.
-
-**Run the pipeline**:
-```sh
-# Generate a briefing with news from the last 7 days
-python main.py ./output 7
-```
-
-**Update fund news**:
-```sh
-# Fetch the latest fund news from MarketAux
-python main.py --update-fund-news
-```
+- Your web browser should open to `http://127.0.0.1:5000`.
+- If it doesn't, you can open your browser and navigate to that address manually.
+- You can now use the web interface to generate and manage your news briefings!
+- To stop the application, simply close the terminal or command prompt window that the script is running in.
 
 ---
 
-## Testing
+## How to Run the App Again
 
-Run all unit tests using `pytest`:
-```sh
-pytest
-```
-Or use the provided script:
-```sh
-python run_tests.py
-```
+Once you've completed the initial setup, you don't need to run `setup.py` again. To launch the application in the future, simply run the `app.py` script from within the virtual environment:
 
----
+- **On Windows**:
+  ```sh
+  venv\\Scripts\\activate
+  python app.py
+  ```
 
-## Dependencies
-
-- **Flask**: Web framework
-- **Playwright**: Advanced web scraping and browser automation
-- **google-generativeai**: Google Gemini API for summarization
-- **requests**, **httpx**: HTTP clients for API communication
-- **trafilatura**, **BeautifulSoup4**: Web content extraction
-- **NLTK**, **textblob**: Sentiment analysis
-- **WeasyPrint**: PDF generation from HTML
-- **pandas**: Data manipulation, used for fund data
-- **pytest**: Testing framework
-
-See `requirements.txt` for the full list of dependencies.
-
----
-
-## Contact
-
-For questions, feature requests, or contributions, please open an issue or contact [alexios0905@gmail.com](mailto:alexios0905@gmail.com).
+- **On macOS / Linux**:
+  ```sh
+  source venv/bin/activate
+  python app.py
+  ```
