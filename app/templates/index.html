@@ -6,9 +6,9 @@
 <div class="container-fluid">
     <!-- Welcome Header -->
     <div class="px-4 py-5 mb-4 bg-light rounded-3">
-        <div class="container-fluid py-5">
-            <h1 class="display-5 fw-bold">Welcome to Your News Briefing Dashboard</h1>
-            <p class="col-md-8 fs-4">Quickly access key tasks and get a snapshot of the latest updates.</p>
+        <div class="container-fluid py-3">
+            <h3 class="fw-bold mb-2">Welcome to Your News Briefing Dashboard</h3>
+            <p class="col-md-8 mb-0" style="font-size: 1.05rem;">Quickly access key tasks and get a snapshot of the latest updates.</p>
         </div>
     </div>
 
@@ -66,6 +66,11 @@
 
         <!-- Fund Performance Snapshot -->
         <div class="col-lg-6 mb-4">
+            {% if funds_last_updated %}
+            <div class="alert alert-info py-2 mb-2" style="font-size: 0.95em;">
+                <i class="fas fa-clock me-1"></i> Fund data last updated: {{ funds_last_updated }}
+            </div>
+            {% endif %}
             <div class="card">
                 <div class="card-header">
                     <h5><i class="fas fa-chart-pie me-2"></i>Fund Performance Snapshot</h5>

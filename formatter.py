@@ -369,7 +369,6 @@ def generate_html(briefing: Dict, logo_path) -> str:
         }
         
         .sentiment-positive::before {
-            content: '●';
             color: #10b981;
         }
         
@@ -380,7 +379,6 @@ def generate_html(briefing: Dict, logo_path) -> str:
         }
         
         .sentiment-neutral::before {
-            content: '●';
             color: #0891b2;
         }
         
@@ -391,7 +389,6 @@ def generate_html(briefing: Dict, logo_path) -> str:
         }
         
         .sentiment-negative::before {
-            content: '●';
             color: #ef4444;
         }
         

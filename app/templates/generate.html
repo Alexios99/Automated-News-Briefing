@@ -11,7 +11,7 @@
     <div class="mb-3">
         {{ form.custom_keywords.label(class="form-label") }}
         {{ form.custom_keywords(class="form-control") }}
-        <small class="form-text text-muted">Comma-separated keywords (optional).</small>
+        <small class="form-text text-muted">Comma-separated keywords (optional). If left blank, the system will use default keywords.<br>You can change the default keywords in the <a href='{{ url_for('main.config') }}'>Config</a> tab.</small>
     </div>
     <button type="submit" class="btn btn-primary" id="submit-btn">{{ form.submit.label.text }}</button>
 </form>

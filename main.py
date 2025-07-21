@@ -3,7 +3,7 @@ import sys
 from datetime import datetime, timedelta
 from typing import List, Optional
 
-from config import NEWS_API_KEY, GOOGLE_API_KEY, KEYWORDS, GEMINI_MODEL, RELEVANT_KEYWORDS, FUNDS
+from config import NEWS_API_KEY, GOOGLE_API_KEY, GEMINI_MODEL, RELEVANT_KEYWORDS, get_keywords, get_funds
 from news_fetcher import fetch_articles
 from human_screen import human_screen_articles
 from scorer import contains_relevant_keywords, score_article
@@ -23,7 +23,7 @@ def fetch_articles_for_briefing(
     """
     Fetch articles for briefing, without human screening or further processing.
     """
-    search_keywords = keywords if keywords else KEYWORDS
+    search_keywords = keywords if keywords else get_keywords()
     articles = fetch_articles(search_keywords, from_days_ago=from_days_ago)
     return articles
 
@@ -133,7 +133,7 @@ def run_pipeline(
 
     # Step 1: Fetch articles from NewsAPI
     print("Fetching articles...")
-    search_keywords = keywords if keywords else KEYWORDS
+    search_keywords = keywords if keywords else get_keywords()
     all_accepted = []
 
     articles = fetch_articles_for_briefing(search_keywords, from_days_ago=from_days_ago)

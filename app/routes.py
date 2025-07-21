@@ -28,17 +28,23 @@ def home():
 
     # Fetch fund performance data
     fund_performance = None
+    funds_last_updated = None
     try:
-        fund_df = pd.read_csv('data/fund_analysis_results.csv')
+        fund_data_path = 'data/fund_analysis_results.csv'
+        fund_df = pd.read_csv(fund_data_path)
         # Sort by discount
         fund_df_sorted = fund_df.sort_values('Discount (%)', ascending=False)
         fund_performance = {
             'all_funds': fund_df_sorted.to_dict('records')
         }
+        # Get last updated time
+        if os.path.exists(fund_data_path):
+            last_updated_ts = os.path.getmtime(fund_data_path)
+            funds_last_updated = datetime.fromtimestamp(last_updated_ts).strftime('%Y-%m-%d %H:%M:%S')
     except Exception as e:
         print(f"Could not load fund performance data for dashboard: {e}")
 
-    return render_template('index.html', recent_briefings=recent_briefings, fund_performance=fund_performance)
+    return render_template('index.html', recent_briefings=recent_briefings, fund_performance=fund_performance, funds_last_updated=funds_last_updated)
 
 @main.route('/generate', methods=['GET', 'POST'])
 def generate():
@@ -95,7 +101,7 @@ def save_config_route():
         # Load existing config to preserve other values
         existing_config = load_config()
         
-        # Update only the API keys
+        # Update API keys if present
         api_keys_to_update = {
             'MARKETAUX_API_TOKEN',
             'GOOGLE_API_KEY',
@@ -104,7 +110,9 @@ def save_config_route():
         for key in api_keys_to_update:
             if key in data:
                 existing_config[key] = data[key]
-        
+        # Update default keywords if present
+        if 'KEYWORDS' in data:
+            existing_config['KEYWORDS'] = data['KEYWORDS']
         save_config(existing_config)
         return jsonify({'success': True, 'message': 'Configuration saved successfully.'})
     except Exception as e:

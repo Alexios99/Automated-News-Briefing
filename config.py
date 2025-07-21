@@ -9,19 +9,9 @@ NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 MARKETAUX_API_TOKEN = os.getenv("MARKETAUX_API_TOKEN")
 
-# If any are missing, try to load from config.json
-if not (NEWS_API_KEY and GOOGLE_API_KEY and MARKETAUX_API_TOKEN):
-    try:
-        with open("config.json", "r") as f:
-            config_data = json.load(f)
-        NEWS_API_KEY = NEWS_API_KEY or config_data.get("NEWS_API_KEY")
-        GOOGLE_API_KEY = GOOGLE_API_KEY or config_data.get("GOOGLE_API_KEY")
-        MARKETAUX_API_TOKEN = MARKETAUX_API_TOKEN or config_data.get("MARKETAUX_API_TOKEN")
-    except Exception:
-        pass
-
-
-FUNDS = [
+# Default values
+_DEFAULT_KEYWORDS = ['Sustainable finance', 'green economy', 'blue economy']
+_DEFAULT_FUNDS = [
     "abrdn Global Sustainable Equity Fund",
     "abrdn UK Sustainable Equity Fund",
     "Aegon Sustainable Diversified Growth Fund",
@@ -144,7 +134,22 @@ FUNDS = [
     "WS Montanaro Better World Fund"
 ]
 
-KEYWORDS = ['Sustainable finance', 'green economy', 'blue economy']
+# Load KEYWORDS and FUNDS from config.json if present, otherwise use defaults
+KEYWORDS = _DEFAULT_KEYWORDS
+FUNDS = _DEFAULT_FUNDS
+try:
+    with open("config.json", "r") as f:
+        config_data = json.load(f)
+    NEWS_API_KEY = NEWS_API_KEY or config_data.get("NEWS_API_KEY")
+    GOOGLE_API_KEY = GOOGLE_API_KEY or config_data.get("GOOGLE_API_KEY")
+    MARKETAUX_API_TOKEN = MARKETAUX_API_TOKEN or config_data.get("MARKETAUX_API_TOKEN")
+    if "KEYWORDS" in config_data and isinstance(config_data["KEYWORDS"], list):
+        KEYWORDS = config_data["KEYWORDS"]
+    if "FUNDS" in config_data and isinstance(config_data["FUNDS"], list):
+        FUNDS = config_data["FUNDS"]
+except Exception:
+    pass
+
 KEYWORDS2 = ["green bonds", "green economy", "blue economy", "sustainable finance", "investment trust", "traded investment trust", 
             "trust discount", "board of directors", "income paying trust", "trust dividend", "trust NAV"]
 
@@ -188,4 +193,26 @@ RELEVANT_KEYWORDS = [
 
 GEMINI_MODEL = "models/gemini-2.0-flash"
 ARTICLE_LOOKBACK_DAYS = 3
+
+# Dynamic config accessors for real-time updates
+
+def get_keywords():
+    try:
+        with open("config.json", "r") as f:
+            config_data = json.load(f)
+        if "KEYWORDS" in config_data and isinstance(config_data["KEYWORDS"], list):
+            return config_data["KEYWORDS"]
+    except Exception:
+        pass
+    return _DEFAULT_KEYWORDS
+
+def get_funds():
+    try:
+        with open("config.json", "r") as f:
+            config_data = json.load(f)
+        if "FUNDS" in config_data and isinstance(config_data["FUNDS"], list):
+            return config_data["FUNDS"]
+    except Exception:
+        pass
+    return _DEFAULT_FUNDS
 
