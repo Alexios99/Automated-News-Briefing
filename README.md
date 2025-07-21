@@ -2,12 +2,20 @@
 
 ## Quick Start
 
-**Windows:**
-- Double-click `start_app.bat` to launch the app. (It will set up everything for you.)
+1. **Download the Project**
+   - **Option A: Download ZIP**
+     - Go to the [GitHub repository page](https://github.com/Alexios99/automated-news-briefing).
+     - Click the green "Code" button, then "Download ZIP".
+     - Unzip the downloaded file on your computer.
+   - **Option B: Use Git (for advanced users)**
+     ```sh
+     git clone https://github.com/Alexios99/automated-news-briefing.git
+     cd automated-news-briefing
+     ```
 
-**Mac:**
-- Open Terminal, run `chmod +x start_app.command` once to make it executable.
-- Then double-click `start_app.command` to launch the app.
+2. **Run the App**
+   - **Windows:** Double-click `start_app.bat` to launch the app. (It will set up everything for you.)
+   - **Mac:** Open Terminal, run `chmod +x start_app.command` once to make it executable, then double-click `start_app.command` to launch the app.
 
 The app will open in your browser at [http://127.0.0.1:5000](http://127.0.0.1:5000).
 
