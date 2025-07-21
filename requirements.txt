@@ -5,6 +5,7 @@ Flask-Session
 requests
 textblob
 markdown2
+markdown
 weasyprint==60.2
 pydyf==0.8.0
 google-generativeai
@@ -23,4 +24,6 @@ tenacity
 structlog
 python-dotenv
 pandas
+newspaper3k
+nltk
 
