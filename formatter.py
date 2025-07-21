@@ -4,6 +4,7 @@ import markdown2
 import markdown
 from playwright.sync_api import sync_playwright
 import tempfile
+from datetime import datetime
 
 
 def generate_markdown(briefing: Dict, output_path: str) -> None:
@@ -13,6 +14,31 @@ def generate_markdown(briefing: Dict, output_path: str) -> None:
     lines.append("")
     lines.append(f"_{str(briefing.get('intro', ''))}_")
     lines.append("\n---\n")
+
+    # Fund Performance Section
+    if briefing.get("fund_performance"):
+        fund_data = briefing["fund_performance"]
+        lines.append("## 📊 Listed Fund Performance Summary")
+        if fund_data.get("last_updated"):
+            lines.append(f"_(Fund data last updated: {fund_data['last_updated']})_")
+        lines.append("")
+
+        if fund_data.get("best_performers"):
+            lines.append("### 🟢 Smallest Discounts")
+            lines.append("| Fund | Price | NAV | Discount |")
+            lines.append("|------|-------|-----|----------|")
+            for fund in fund_data["best_performers"][:5]:
+                lines.append(f"| {fund['Fund Name']} | £{fund['Close Price']:.2f} | £{fund['NAV']:.2f} | {fund['Discount (%)']:.1f}% |")
+            lines.append("")
+
+        if fund_data.get("worst_performers"):
+            lines.append("### 🔴 Largest Discounts")
+            lines.append("| Fund | Price | NAV | Discount |")
+            lines.append("|------|-------|-----|----------|")
+            for fund in fund_data["worst_performers"][:5]:
+                lines.append(f"| {fund['Fund Name']} | £{fund['Close Price']:.2f} | £{fund['NAV']:.2f} | {fund['Discount (%)']:.1f}% |")
+            lines.append("")
+        lines.append("\n---\n")
 
     lines.append("## 🔍 Article Highlights\n")
     for i, article in enumerate(briefing["articles"], 1):
@@ -71,9 +97,15 @@ def generate_fund_performance_section(fund_data_path: str) -> Optional[Dict[str,
         best_performers = df_sorted[df_sorted['Discount (%)'] > -30]  # Less than 15% discount
         worst_performers = df_sorted[df_sorted['Discount (%)'] < -30]  # More than 30% discount
         
+        # Get last modified time of the data file
+        last_modified_timestamp = os.path.getmtime(fund_data_path)
+        last_modified_dt = datetime.fromtimestamp(last_modified_timestamp)
+        last_modified_str = last_modified_dt.strftime('%Y-%m-%d %H:%M:%S')
+
         return {
             'best_performers': best_performers.to_dict('records'), # type: ignore
             'worst_performers': worst_performers.to_dict('records'), # type: ignore
+            'last_updated': last_modified_str,
         }
     except Exception as e:
         print(f"Error processing fund data: {e}")
@@ -512,7 +544,9 @@ def generate_html(briefing: Dict, logo_path) -> str:
         
         lines.append('<div class="fund-performance-section">')
         lines.append('<h2 class="section-header">📊 Listed Fund Performance Summary</h2>')
-        
+        if fund_data.get("last_updated"):
+            lines.append(f'<p style="text-align:center; font-size: 12px; color: #6b7280; margin-bottom: 20px;">Fund data last updated: {fund_data["last_updated"]}</p>')
+
         # Top/Bottom performers tables
         if fund_data.get("best_performers"):
             lines.append('<div class="fund-tables">')

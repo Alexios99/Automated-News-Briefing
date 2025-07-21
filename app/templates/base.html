@@ -1,28 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Automated News Briefing{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico', v=2) }}">
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      .container {
+        flex: 1;
+      }
+    </style>
 </head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<body class="d-flex flex-column h-100">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="/">News Briefing</a>
-    <div class="collapse navbar-collapse">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item"><a class="nav-link" href="/generate">Generate Briefing</a></li>
-        <li class="nav-item"><a class="nav-link" href="/briefings">View Briefings</a></li>
-        <li class="nav-item"><a class="nav-link" href="/config">Configure</a></li>
-        <li class="nav-item"><a class="nav-link" href="/fund_news">Fund News</a></li>
-        <li class="nav-item"><a class="nav-link" href="/create_briefing_from_fund_news">Create Briefing from Fund News</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.home') }}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.generate') }}">Generate Briefing</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.briefings') }}">View Briefings</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.fund_news') }}">Fund News</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.create_briefing_from_fund_news') }}">Create from Fund News</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.config') }}">Configure</a></li>
       </ul>
     </div>
   </div>
 </nav>
-<div class="container mt-4">
+<main class="container mt-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     {% block content %}{% endblock %}
-</div>
+</main>
+<footer class="footer mt-auto py-3 bg-light">
+  <div class="container text-center">
+    <span class="text-muted">Automated News Briefing &copy; 2024</span>
+  </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html> 

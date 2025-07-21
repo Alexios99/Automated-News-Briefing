@@ -6,31 +6,41 @@ from flask import current_app
 
 OUTPUT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'output'))
 ALLOWED_EXTENSIONS = {'.pdf', '.html', '.md'}
-FILENAME_RE = re.compile(r'^briefing_(\d{4}-\d{2}-\d{2})(?:_[\w-]+)?\.(pdf|html|md)$')
+FILENAME_RE = re.compile(r'^briefing_(\d{4}-\d{2}-\d{2})(?:_([\w-]+))?\.(pdf|html|md)$')
 
 def list_briefings():
     """
-    Scan OUTPUT_DIR for briefing files, group by date, and return metadata.
+    Scan OUTPUT_DIR for briefing files, group by date and custom name, and return metadata.
     Returns:
-        dict: {date: { 'files': {format: filename, ...}, 'datetime': datetime_obj }}
+        dict: {group_key: { 'name': str, 'files': {format: filename, ...}, 'datetime': datetime_obj }}
     """
     briefings = {}
-    for fname in os.listdir(OUTPUT_DIR):
-        match = FILENAME_RE.match(fname)
-        if match:
-            date_str, ext = match.groups()
-            ext = '.' + ext
-            if ext not in ALLOWED_EXTENSIONS:
-                continue
-            date_obj = datetime.strptime(date_str, '%Y-%m-%d')
-            if date_str not in briefings:
-                briefings[date_str] = {
-                    'files': {},
-                    'datetime': date_obj,
-                }
-            briefings[date_str]['files'][ext[1:]] = fname  # e.g., 'pdf': filename
-    # Sort by date descending
-    return dict(sorted(briefings.items(), key=lambda x: x[1]['datetime'], reverse=True))
+    if not os.path.exists(OUTPUT_DIR):
+        return {}
+    for entry in os.scandir(OUTPUT_DIR):
+        if entry.is_file():
+            match = FILENAME_RE.match(entry.name)
+            if match:
+                date_str, custom_name, ext = match.groups()
+                ext = ext.lower()
+                if f".{ext}" not in ALLOWED_EXTENSIONS:
+                    continue
+                
+                date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+                group_key = f"{date_str}_{custom_name or 'daily'}"
+                
+                if group_key not in briefings:
+                    briefings[group_key] = {
+                        'name': f"Briefing for {date_str}" + (f" ({custom_name.replace('_', ' ').title()})" if custom_name else ""),
+                        'files': {},
+                        'datetime': date_obj,
+                        'date': date_str,
+                        'custom_name': custom_name
+                    }
+                briefings[group_key]['files'][ext] = entry.name
+                
+    # Sort by date descending, then by name
+    return dict(sorted(briefings.items(), key=lambda x: (x[1]['datetime'], x[1]['name']), reverse=True))
 
 def get_config_path():
     return os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config.json')

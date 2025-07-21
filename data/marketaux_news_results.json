@@ -1006,5 +1006,52 @@
     "funds": [
       "Gore Street Energy Storage Fund"
     ]
+  },
+  {
+    "uuid": "e54bbbcf-d999-4c4a-9fee-2d52f05f41e3",
+    "title": "Full Year 2025 Gore Street Energy Storage Fund PLC Earnings Presentation Transcript",
+    "description": "Refinitiv StreetEvents Event TranscriptE D I T E D   V E R S I O NGSF.L - Gore Street Energy Storage Fund PLCFull Year 2025 Gore Street Energy Storage Fund PLC",
+    "keywords": "GuruFocus, Article, News, GuruFocus News, LSE:GSF",
+    "snippet": "\n\n\n\nRefinitiv StreetEvents Event Transcript\n\nE D I T E D V E R S I O N\n\n\n\nGSF.L - Gore Street Energy Storage Fund PLC\n\nFull Year 2025 Gore Street Energy Storage...",
+    "url": "https://www.gurufocus.com/news/2987634/full-year-2025-gore-street-energy-storage-fund-plc-earnings-presentation-transcript",
+    "image_url": "https://static.gurufocus.com/images/global_logo_twitter_card.png",
+    "language": "en",
+    "published_at": "2025-07-18T14:02:19.000000Z",
+    "source": "gurufocus.com",
+    "relevance_score": null,
+    "entities": [
+      {
+        "symbol": "GSF.L",
+        "name": "Gore Street Energy Storage Fund Plc",
+        "exchange": null,
+        "exchange_long": null,
+        "country": "gb",
+        "type": "equity",
+        "industry": "Financial Services",
+        "match_score": 275.85785,
+        "sentiment_score": 0.236533,
+        "highlights": [
+          {
+            "highlight": "Refinitiv StreetEvents Event Transcript\n[+427 characters]",
+            "sentiment": 0,
+            "highlighted_in": "main_text"
+          },
+          {
+            "highlight": "_1 [1]\n\n--------------------------------[+194 characters]",
+            "sentiment": 0.7096,
+            "highlighted_in": "main_text"
+          },
+          {
+            "highlight": "Full Year 2025 <em>Gore</em> <em>Street</em> <em>Energy</em> <em>Storage</em> <em>Fund</em> <em>PLC</em> Earnings Presentation Transcript",
+            "sentiment": 0,
+            "highlighted_in": "title"
+          }
+        ]
+      }
+    ],
+    "similar": [],
+    "funds": [
+      "Gore Street Energy Storage Fund"
+    ]
   }
 ]

@@ -69,7 +69,21 @@ def config():
 def save_config_route():
     try:
         data = request.get_json()
-        save_config(data)
+        
+        # Load existing config to preserve other values
+        existing_config = load_config()
+        
+        # Update only the API keys
+        api_keys_to_update = {
+            'MARKETAUX_API_TOKEN',
+            'GOOGLE_API_KEY',
+            'NEWS_API_KEY'
+        }
+        for key in api_keys_to_update:
+            if key in data:
+                existing_config[key] = data[key]
+        
+        save_config(existing_config)
         return jsonify({'success': True, 'message': 'Configuration saved successfully.'})
     except Exception as e:
         return jsonify({'success': False, 'message': f'Error saving configuration: {str(e)}'}), 500
@@ -135,6 +149,35 @@ def delete_file(filename):
         return jsonify({'success': True})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@main.route('/delete_briefing/<string:group_key>', methods=['POST'])
+def delete_briefing_group(group_key):
+    try:
+        # Reconstruct filenames from group_key (date_customName)
+        parts = group_key.split('_')
+        date_str = parts[0]
+        custom_name = parts[1] if len(parts) > 1 else None
+
+        # Find all files for this group and delete them
+        files_deleted_count = 0
+        for ext in ALLOWED_EXTENSIONS:
+            fname = f"briefing_{date_str}"
+            if custom_name and custom_name != 'daily':
+                fname += f"_{custom_name}"
+            fname += ext
+            
+            file_path = os.path.join(OUTPUT_DIR, fname)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                files_deleted_count += 1
+        
+        if files_deleted_count > 0:
+            return jsonify({'success': True})
+        else:
+            return jsonify({'success': False, 'error': 'No files found for this briefing.'}), 404
+            
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @main.route('/update_fund_news', methods=['POST'])
 def update_fund_news():

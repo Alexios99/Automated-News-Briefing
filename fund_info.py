@@ -107,23 +107,24 @@ def refresh_fund_data(force: bool = False):
                 if px is not None and nav is not None and not px.empty and not nav.empty:
                     data = px.join(nav, how="inner")
                     
-                    price_col = px.columns[0]
-                    nav_col = nav.columns[0]
-                    
-                    # Get latest available values and their date
-                    latest_price = data[price_col].iloc[-1]
-                    latest_nav = data[nav_col].iloc[-1]
-                    latest_date = data.index[-1]
-                    discount_pct = (latest_price - latest_nav) / latest_nav * 100
-                    
-                    results.append({
-                        'Fund Name': fund_name,
-                        'Ticker': ticker,
-                        'Date': latest_date.strftime("%Y-%m-%d"),
-                        'Close Price': latest_price,
-                        'NAV': latest_nav,
-                        'Discount (%)': discount_pct
-                    })
+                    if not data.empty:
+                        price_col = px.columns[0]
+                        nav_col = nav.columns[0]
+                        
+                        # Get latest available values and their date
+                        latest_price = data[price_col].iloc[-1]
+                        latest_nav = data[nav_col].iloc[-1]
+                        latest_date = data.index[-1]
+                        discount_pct = (latest_price - latest_nav) / latest_nav * 100
+                        
+                        results.append({
+                            'Fund Name': fund_name,
+                            'Ticker': ticker,
+                            'Date': pd.to_datetime(latest_date).strftime("%Y-%m-%d"),
+                            'Close Price': latest_price,
+                            'NAV': latest_nav,
+                            'Discount (%)': discount_pct
+                        })
                     
             except Exception as e:
                 print(f"✗ {fund_name}: Error - {str(e)}")
@@ -131,12 +132,14 @@ def refresh_fund_data(force: bool = False):
         # Create results DataFrame
         results_df = pd.DataFrame(results)
 
-        # Ensure directory exists
-        os.makedirs("data", exist_ok=True)
-        
-        # Save to CSV
-        results_df.to_csv("data/fund_analysis_results.csv", index=False)
-        print(f"✓ Fund data refreshed successfully - {len(results)} funds updated")
+        # Save to CSV only if we have new data
+        if not results_df.empty:
+            # Ensure directory exists
+            os.makedirs("data", exist_ok=True)
+            results_df.to_csv("data/fund_analysis_results.csv", index=False)
+            print(f"✓ Fund data refreshed successfully - {len(results)} funds updated")
+        else:
+            print("✗ No new fund data was fetched. Existing data has been preserved.")
         
         rd.close_session()
         return True

@@ -1,6 +1,45 @@
 {% extends 'base.html' %}
 {% block title %}Home - Automated News Briefing{% endblock %}
 {% block content %}
-    <h1>Automated News Briefing</h1>
-    <p>Welcome! Use the navigation to generate or view news briefings.</p>
+<div class="px-4 py-5 my-5 text-center">
+    <img class="d-block mx-auto mb-4" src="{{ url_for('static', filename='favicon.ico') }}" alt="" width="72" height="72">
+    <h1 class="display-5 fw-bold">Automated News Briefing</h1>
+    <div class="col-lg-6 mx-auto">
+      <p class="lead mb-4">Welcome to your automated news briefing dashboard. Here you can generate new briefings, view past ones, and manage your news sources.</p>
+      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <a href="{{ url_for('main.generate') }}" class="btn btn-primary btn-lg px-4 gap-3">Generate New Briefing</a>
+        <a href="{{ url_for('main.briefings') }}" class="btn btn-outline-secondary btn-lg px-4">View Past Briefings</a>
+      </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Fund News</h5>
+                <p class="card-text">View the latest news related to your tracked funds.</p>
+                <a href="{{ url_for('main.fund_news') }}" class="btn btn-primary">Go to Fund News</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Create Custom Briefing</h5>
+                <p class="card-text">Manually select articles from the fund news to create a custom briefing.</p>
+                <a href="{{ url_for('main.create_briefing_from_fund_news') }}" class="btn btn-primary">Create Briefing</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Configuration</h5>
+                <p class="card-text">Manage your API keys and other application settings.</p>
+                <a href="{{ url_for('main.config') }}" class="btn btn-secondary">Go to Settings</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %} 
