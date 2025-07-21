@@ -47,10 +47,10 @@ async def get_full_article(url: str) -> Optional[Dict[str, Any]]:
         text = art.text or ""
         if len(text) >= 1000:
             elapsed = int((time() - start) * 1000)
-            logger.info("extract_success", event="extract", url=url, layer="newspaper3k", elapsed_ms=elapsed)
+            logger.info("extract_success", layer="newspaper3k", url=url, elapsed_ms=elapsed)
             return {"title": art.title, "text": text, "layer": "newspaper3k", "elapsed_ms": elapsed, "url": url}
     except Exception as e:
-        logger.warning("extract_fail", event="exception", url=url, layer="newspaper3k", error=str(e))
+        logger.warning("extract_failed", layer="newspaper3k", url=url, error=str(e))
 
     # L2: requests + BeautifulSoup + readability-lxml
     try:
@@ -63,10 +63,10 @@ async def get_full_article(url: str) -> Optional[Dict[str, Any]]:
         text = soup.get_text(separator="\n", strip=True)
         if len(text) >= 1000:
             elapsed = int((time() - start) * 1000)
-            logger.info("extract_success", event="extract", url=url, layer="readability-lxml", elapsed_ms=elapsed)
+            logger.info("extract_success", layer="readability-lxml", url=url, elapsed_ms=elapsed)
             return {"title": doc.title(), "text": text, "layer": "readability-lxml", "elapsed_ms": elapsed, "url": url}
     except Exception as e:
-        logger.warning("extract_fail", event="exception", url=url, layer="readability-lxml", error=str(e))
+        logger.warning("extract_failed", layer="readability-lxml", url=url, error=str(e))
 
     # L3: Playwright (headless, stealth)
     try:
@@ -78,11 +78,11 @@ async def get_full_article(url: str) -> Optional[Dict[str, Any]]:
                 text = trafilatura.extract(html, favor_precision=True) or ""
             if text and len(text) >= 1000:
                 elapsed = int((time() - start) * 1000)
-                logger.info("extract_success", event="extract", url=url, layer="playwright", elapsed_ms=elapsed)
+                logger.info("extract_success", layer="playwright", url=url, elapsed_ms=elapsed)
                 return {"title": doc.title(), "text": text, "layer": "playwright", "elapsed_ms": elapsed, "url": url}
     except Exception as e:
-        logger.warning("extract_fail", event="exception", url=url, layer="playwright", error=str(e))
+        logger.warning("extract_failed", layer="playwright", url=url, error=str(e))
 
     # L4: (future) fallback_api.fetch(url) stub
-    logger.info("extract_fail", event="all_layers_failed", url=url)
+    logger.info("extract_failed_all_layers", url=url)
     return None 
