@@ -120,11 +120,35 @@ def launch_application(first_run=False):
     except Exception as e:
         print(f"\nAn error occurred while running the application: {e}")
 
-if __name__ == "__main__":
+def is_setup_complete():
+    """Check if venv exists and dependencies are installed."""
+    if not os.path.isdir(VENV_DIR):
+        return False
+    pip_executable = get_executable("pip")
+    try:
+        # Try importing Flask as a proxy for all dependencies
+        subprocess.check_call([str(get_executable("python")), "-c", "import flask"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return True
+    except Exception:
+        return False
+
+def main():
     print("--- Automated News Briefing Setup ---")
     check_python_version()
-    create_virtual_environment()
-    install_dependencies()
-    install_playwright_browsers()
-    configure_application()
-    launch_application(first_run=True) 
+    if is_setup_complete():
+        print("Detected existing setup. Launching the app...")
+        launch_application(first_run=False)
+    else:
+        create_virtual_environment()
+        install_dependencies()
+        install_playwright_browsers()
+        configure_application()
+        launch_application(first_run=True)
+    # Only prompt if the script reaches here (i.e., not blocked by Flask app)
+    try:
+        input("\nPress Enter to close this window...")
+    except EOFError:
+        pass
+
+if __name__ == "__main__":
+    main() 
