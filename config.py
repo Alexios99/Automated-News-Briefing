@@ -1,15 +1,24 @@
 import os
+import json
 from dotenv import load_dotenv
 
 load_dotenv()
 
+# Try to load from environment variables first
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 MARKETAUX_API_TOKEN = os.getenv("MARKETAUX_API_TOKEN")
-KEYWORDS = ['Sustainable finance', 'green economy', 'blue economy']
-KEYWORDS2 = ["green bonds", "green economy", "blue economy", "sustainable finance", "investment trust", "traded investment trust", 
-            "trust discount", "board of directors", "income paying trust", "trust dividend", "trust NAV"]
 
+# If any are missing, try to load from config.json
+if not (NEWS_API_KEY and GOOGLE_API_KEY and MARKETAUX_API_TOKEN):
+    try:
+        with open("config.json", "r") as f:
+            config_data = json.load(f)
+        NEWS_API_KEY = NEWS_API_KEY or config_data.get("NEWS_API_KEY")
+        GOOGLE_API_KEY = GOOGLE_API_KEY or config_data.get("GOOGLE_API_KEY")
+        MARKETAUX_API_TOKEN = MARKETAUX_API_TOKEN or config_data.get("MARKETAUX_API_TOKEN")
+    except Exception:
+        pass
 
 
 FUNDS = [
@@ -135,7 +144,9 @@ FUNDS = [
     "WS Montanaro Better World Fund"
 ]
 
-
+KEYWORDS = ['Sustainable finance', 'green economy', 'blue economy']
+KEYWORDS2 = ["green bonds", "green economy", "blue economy", "sustainable finance", "investment trust", "traded investment trust", 
+            "trust discount", "board of directors", "income paying trust", "trust dividend", "trust NAV"]
 
 
 

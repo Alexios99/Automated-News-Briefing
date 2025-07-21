@@ -18,13 +18,13 @@ def generate_markdown(briefing: Dict, output_path: str) -> None:
     # Fund Performance Section
     if briefing.get("fund_performance"):
         fund_data = briefing["fund_performance"]
-        lines.append("## 📊 Listed Fund Performance Summary")
+        lines.append("## Listed Fund Performance Summary")
         if fund_data.get("last_updated"):
             lines.append(f"_(Fund data last updated: {fund_data['last_updated']})_")
         lines.append("")
 
         if fund_data.get("best_performers"):
-            lines.append("### 🟢 Smallest Discounts")
+            lines.append("### Smallest Discounts")
             lines.append("| Fund | Price | NAV | Discount |")
             lines.append("|------|-------|-----|----------|")
             for fund in fund_data["best_performers"][:5]:
@@ -32,7 +32,7 @@ def generate_markdown(briefing: Dict, output_path: str) -> None:
             lines.append("")
 
         if fund_data.get("worst_performers"):
-            lines.append("### 🔴 Largest Discounts")
+            lines.append("### Largest Discounts")
             lines.append("| Fund | Price | NAV | Discount |")
             lines.append("|------|-------|-----|----------|")
             for fund in fund_data["worst_performers"][:5]:
@@ -40,7 +40,7 @@ def generate_markdown(briefing: Dict, output_path: str) -> None:
             lines.append("")
         lines.append("\n---\n")
 
-    lines.append("## 🔍 Article Highlights\n")
+    lines.append("## Article Highlights\n")
     for i, article in enumerate(briefing["articles"], 1):
         lines.append(f"### {i}. {str(article.get('title', ''))}")
         lines.append(f"**Source:** {str(article.get('source', ''))} | **Date:** {str(article.get('date', ''))}")
@@ -543,7 +543,7 @@ def generate_html(briefing: Dict, logo_path) -> str:
         fund_data = briefing["fund_performance"]
         
         lines.append('<div class="fund-performance-section">')
-        lines.append('<h2 class="section-header">📊 Listed Fund Performance Summary</h2>')
+        lines.append('<h2 class="section-header">Listed Fund Performance Summary</h2>')
         if fund_data.get("last_updated"):
             lines.append(f'<p style="text-align:center; font-size: 12px; color: #6b7280; margin-bottom: 20px;">Fund data last updated: {fund_data["last_updated"]}</p>')
 
@@ -551,7 +551,7 @@ def generate_html(briefing: Dict, logo_path) -> str:
         if fund_data.get("best_performers"):
             lines.append('<div class="fund-tables">')
             lines.append('<div class="fund-table-container">')
-            lines.append('<h3>🟢 Smallest Discounts</h3>')
+            lines.append('<h3>Smallest Discounts</h3>')
             lines.append('<table class="fund-table">')
             lines.append('<tr><th>Fund</th><th>Price</th><th>NAV</th><th>Discount</th></tr>')
             for fund in fund_data["best_performers"][:5]:  # Top 5
@@ -561,7 +561,7 @@ def generate_html(briefing: Dict, logo_path) -> str:
         
         if fund_data.get("worst_performers"):
             lines.append('<div class="fund-table-container">')
-            lines.append('<h3>🔴 Largest Discounts</h3>')
+            lines.append('<h3>Largest Discounts</h3>')
             lines.append('<table class="fund-table">')
             lines.append('<tr><th>Fund</th><th>Price</th><th>NAV</th><th>Discount</th></tr>')
             for fund in fund_data["worst_performers"][:5]:  # Bottom 5
