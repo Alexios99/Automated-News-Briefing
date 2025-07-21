@@ -17,20 +17,25 @@ if %errorlevel% neq 0 (
 REM Check if venv exists
 if exist venv (
     echo Detected existing setup. Launching the app...
-    REM Activate venv and run app.py directly
     call venv\Scripts\activate
+    echo Starting the app. Please wait a few seconds...
+    timeout /t 3 >nul
     start "" http://127.0.0.1:5000
     python app.py
+    echo.
+    echo If the app did not start or you see errors above, please check your setup.
+    pause
     goto :eof
 )
 
 REM Run setup.py for first-time setup
 python setup.py
 
-REM Open browser after setup (if not already open)
+REM Wait a moment, then open browser after setup (if not already open)
+echo Opening the app in your browser...
+timeout /t 3 >nul
 start "" http://127.0.0.1:5000
 
-REM Pause so the window stays open if there's an error
 echo.
 echo If the app did not start, please check for errors above.
 pause 

@@ -1,5 +1,24 @@
 # Automated News Briefing
 
+## Before You Start
+
+**You need Python 3.8 or higher to use this app.**
+
+- If you don’t have Python installed, download it here:
+  - [Download Python for Windows/Mac/Linux](https://www.python.org/downloads/)
+- After installing, you may need to restart your computer.
+- To check if Python is installed, open your terminal/command prompt and type:
+  ```sh
+  python --version
+  ```
+  or
+  ```sh
+  python3 --version
+  ```
+  You should see something like `Python 3.10.12` (any version 3.8 or higher is fine).
+
+---
+
 ## Quick Start
 
 1. **Download the Project**
@@ -13,7 +32,11 @@
      cd automated-news-briefing
      ```
 
-2. **Run the App**
+2. **Install Python (if you haven’t already)**
+   - Download and install Python 3.8 or higher from [python.org](https://www.python.org/downloads/).
+   - After installing, you may need to restart your computer.
+
+3. **Run the App**
    - **Windows:** Double-click `start_app.bat` to launch the app. (It will set up everything for you.)
    - **Mac:** Open Terminal, run `chmod +x start_app.command` once to make it executable, then double-click `start_app.command` to launch the app.
 
