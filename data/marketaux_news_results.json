@@ -1053,5 +1053,42 @@
     "funds": [
       "Gore Street Energy Storage Fund"
     ]
+  },
+  {
+    "uuid": "712a66aa-6cd7-416a-92e5-5722adc6dc19",
+    "title": "GridBeyond Leads Optimization of 200MW Energy Storage Site in California",
+    "description": "GridBeyond, a global leader in smart energy management, and Gore Street Energy Storage Fund plc (LSE: GSF), a leading international energy storage investment f",
+    "keywords": "GuruFocus, Article, News, Business Wire, LSE:GSF",
+    "snippet": "GridBeyond, a global leader in smart energy management, and Gore Street Energy Storage Fund plc (LSE: GSF), a leading international energy storage investment fu...",
+    "url": "https://www.gurufocus.com/news/2993018/gridbeyond-leads-optimization-of-200mw-energy-storage-site-in-california",
+    "image_url": "https://static.gurufocus.com/images/global_logo_twitter_card.png",
+    "language": "en",
+    "published_at": "2025-07-22T13:00:02.000000Z",
+    "source": "gurufocus.com",
+    "relevance_score": null,
+    "entities": [
+      {
+        "symbol": "GSF.L",
+        "name": "Gore Street Energy Storage Fund Plc",
+        "exchange": null,
+        "exchange_long": null,
+        "country": "gb",
+        "type": "equity",
+        "industry": "Financial Services",
+        "match_score": 86.616745,
+        "sentiment_score": 0.7906,
+        "highlights": [
+          {
+            "highlight": "GridBeyond, a global leader in smart ene[+303 characters]",
+            "sentiment": 0.7906,
+            "highlighted_in": "main_text"
+          }
+        ]
+      }
+    ],
+    "similar": [],
+    "funds": [
+      "Gore Street Energy Storage Fund"
+    ]
   }
 ]

@@ -1,124 +1,4 @@
-import os
-from typing import Dict, Any, Optional
-import markdown2
-import markdown
-from playwright.sync_api import sync_playwright
-import tempfile
-from datetime import datetime
-
-
-def generate_markdown(briefing: Dict, output_path: str) -> None:
-    """Converts a structured briefing dict to a Markdown (.md) file."""
-    lines = []
-    lines.append(f"# COMPANY End of Week Briefing – {str(briefing.get('date', ''))}")
-    lines.append("")
-    lines.append(f"_{str(briefing.get('intro', ''))}_")
-    lines.append("\n---\n")
-
-    # Fund Performance Section
-    if briefing.get("fund_performance"):
-        fund_data = briefing["fund_performance"]
-        lines.append("## Listed Fund Performance Summary")
-        if fund_data.get("last_updated"):
-            lines.append(f"_(Fund data last updated: {fund_data['last_updated']})_")
-        lines.append("")
-
-        if fund_data.get("best_performers"):
-            lines.append("### Smallest Discounts")
-            lines.append("| Fund | Price | NAV | Discount |")
-            lines.append("|------|-------|-----|----------|")
-            for fund in fund_data["best_performers"][:5]:
-                lines.append(f"| {fund['Fund Name']} | £{fund['Close Price']:.2f} | £{fund['NAV']:.2f} | {fund['Discount (%)']:.1f}% |")
-            lines.append("")
-
-        if fund_data.get("worst_performers"):
-            lines.append("### Largest Discounts")
-            lines.append("| Fund | Price | NAV | Discount |")
-            lines.append("|------|-------|-----|----------|")
-            for fund in fund_data["worst_performers"][:5]:
-                lines.append(f"| {fund['Fund Name']} | £{fund['Close Price']:.2f} | £{fund['NAV']:.2f} | {fund['Discount (%)']:.1f}% |")
-            lines.append("")
-        lines.append("\n---\n")
-
-    lines.append("## Article Highlights\n")
-    for i, article in enumerate(briefing["articles"], 1):
-        lines.append(f"### {i}. {str(article.get('title', ''))}")
-        lines.append(f"**Source:** {str(article.get('source', ''))} | **Date:** {str(article.get('date', ''))}")
-        lines.append(f"[Read full article]({str(article.get('url', ''))})\n")
-
-        lines.append(f"**Sentiment:** {str(article.get('sentiment', '')).capitalize()}")
-        lines.append("")
-        lines.append(str(article.get("summary", "")))
-        lines.append("\n---\n")
-
-    # Write Markdown to file
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
-
-
-def generate_pdf(briefing: Dict, output_path: str, logo_path) -> None:
-    """
-    Renders briefing as a PDF using a headless Chromium browser via Playwright.
-    Args:
-        briefing (Dict): The structured briefing data.
-        output_path (str): Destination path for the generated PDF.
-        logo_path (str): Optional path to a local logo image used in the HTML.
-    """
-    html_content = generate_html(briefing, logo_path or "")
-    with tempfile.TemporaryDirectory() as temp_dir:
-        html_file_path = os.path.join(temp_dir, "briefing.html")
-
-        # Replace logo path with absolute path if provided
-        if logo_path:
-            html_content = html_content.replace(str(logo_path), f"file://{os.path.abspath(logo_path)}")
-
-        # Save HTML to temp file
-        with open(html_file_path, "w", encoding="utf-8") as f:
-            f.write(html_content)
-
-        with sync_playwright() as p:
-            browser = p.chromium.launch()
-            page = browser.new_page()
-            page.goto(f"file://{html_file_path}", wait_until="load")
-            page.pdf(path=output_path, format="A4", print_background=True)
-            browser.close()
-
-
-def generate_fund_performance_section(fund_data_path: str) -> Optional[Dict[str, Any]]:
-    """Generate HTML/Markdown for fund performance data"""
-    try:
-        import pandas as pd
-        df = pd.read_csv(fund_data_path)
-        
-        # Sort by discount % (best to worst performing)
-        df_sorted = df.sort_values('Discount (%)', ascending=False)
-        
-        # Categorize funds by discount levels
-        best_performers = df_sorted[df_sorted['Discount (%)'] > -30]  # Less than 15% discount
-        worst_performers = df_sorted[df_sorted['Discount (%)'] < -30]  # More than 30% discount
-        
-        # Get last modified time of the data file
-        last_modified_timestamp = os.path.getmtime(fund_data_path)
-        last_modified_dt = datetime.fromtimestamp(last_modified_timestamp)
-        last_modified_str = last_modified_dt.strftime('%Y-%m-%d %H:%M:%S')
-
-        return {
-            'best_performers': best_performers.to_dict('records'), # type: ignore
-            'worst_performers': worst_performers.to_dict('records'), # type: ignore
-            'last_updated': last_modified_str,
-        }
-    except Exception as e:
-        print(f"Error processing fund data: {e}")
-        return None
-
-
-
-
-
-def generate_html(briefing: Dict, logo_path) -> str:
-    """Converts a structured briefing dict to a modern, professional HTML string for PDF output."""
-    logo_path = logo_path or ""
-    style = '''
+<html><head><title></title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -415,7 +295,6 @@ def generate_html(briefing: Dict, logo_path) -> str:
         }
         
         .article-link::after {
-            content: '\2192';
             transition: transform 0.2s ease;
         }
         
@@ -507,113 +386,130 @@ def generate_html(briefing: Dict, logo_path) -> str:
         .discount-positive { color: #059669; font-weight: 600; }
         .discount-negative { color: #dc2626; font-weight: 600; }
     </style>
-    '''
-    
-    lines = []
-    lines.append(f"<html><head><title>{str(briefing.get('title', ''))}</title>{style}</head><body>")
-    lines.append('<div class="document-container">')
-    lines.append('<div class="watermark">DRAFT</div>')
-    
-    # Header
-    lines.append('<div class="header">')
-    lines.append('<div class="header-content">')
-    lines.append('<div class="logo-section">')
-    if logo_path:
-        lines.append(f'<img src="{str(logo_path)}" alt="Logo" />')
-    lines.append('</div>')
-    lines.append('<div class="document-info">')
-    lines.append(f'<div>Report Date: {str(briefing.get("date", ""))}</div>')
-    lines.append('</div>')
-    lines.append('</div>')
-    lines.append(f'<div class="briefing-title">{str(briefing.get("title", "Weekly Market Briefing"))}</div>')
-    lines.append(f'<div class="briefing-date">Week Ending {str(briefing.get("date", ""))}</div>')
-    lines.append('</div>')
-    
-    # Executive Summary
-    lines.append('<div class="executive-summary">')
-    lines.append('<h2>Weekly Summary</h2>')
-    lines.append(f'<p>{str(briefing.get("intro", ""))}</p>')
-    lines.append('</div>')
-
-    # Fund Data
-    if briefing.get("fund_performance"):
-        fund_data = briefing["fund_performance"]
-        
-        lines.append('<div class="fund-performance-section">')
-        lines.append('<h2 class="section-header">Listed Fund Performance Summary</h2>')
-        if fund_data.get("last_updated"):
-            lines.append(f'<p style="text-align:center; font-size: 12px; color: #6b7280; margin-bottom: 20px;">Fund data last updated: {fund_data["last_updated"]}</p>')
-
-        # Top/Bottom performers tables
-        if fund_data.get("best_performers"):
-            lines.append('<div class="fund-tables">')
-            lines.append('<div class="fund-table-container">')
-            lines.append('<h3>Smallest Discounts</h3>')
-            lines.append('<table class="fund-table">')
-            lines.append('<tr><th>Fund</th><th>Price</th><th>NAV</th><th>Discount</th></tr>')
-            for fund in fund_data["best_performers"][:5]:  # Top 5
-                lines.append(f'<tr><td>{fund["Fund Name"]}</td><td>£{fund["Close Price"]:.2f}</td><td>£{fund["NAV"]:.2f}</td><td class="discount-positive">{fund["Discount (%)"]:.1f}%</td></tr>')
-            lines.append('</table>')
-            lines.append('</div>')
-        
-        if fund_data.get("worst_performers"):
-            lines.append('<div class="fund-table-container">')
-            lines.append('<h3>Largest Discounts</h3>')
-            lines.append('<table class="fund-table">')
-            lines.append('<tr><th>Fund</th><th>Price</th><th>NAV</th><th>Discount</th></tr>')
-            for fund in fund_data["worst_performers"][:5]:  # Bottom 5
-                lines.append(f'<tr><td>{fund["Fund Name"]}</td><td>£{fund["Close Price"]:.2f}</td><td>£{fund["NAV"]:.2f}</td><td class="discount-negative">{fund["Discount (%)"]:.1f}%</td></tr>')
-            lines.append('</table>')
-            lines.append('</div>')
-            lines.append('</div>')
-    
-    # Articles Section
-    lines.append('<div class="articles-section">')
-    lines.append('<h2 class="section-header">COMPANY Intelligence</h2>')
-    
-    for i, article in enumerate(briefing["articles"], 1):
-        sentiment = str(article.get('sentiment', '')).lower()
-        sentiment_label = 'Neutral'
-        sentiment_class = 'sentiment-neutral'
-        
-        if sentiment in ['pos', 'positive']:
-            sentiment_class = 'sentiment-positive'
-            sentiment_label = 'Positive'
-        elif sentiment in ['neg', 'negative']:
-            sentiment_class = 'sentiment-negative'
-            sentiment_label = 'Negative'
-        
-        lines.append('<div class="article-card">')
-        lines.append('<div class="article-header">')
-        lines.append(f'<div class="article-number">{i}</div>')
-        lines.append(f'<h3 class="article-title">{str(article.get("title", ""))}</h3>')
-        lines.append('</div>')
-        
-        lines.append('<div class="article-meta">')
-        lines.append('<div class="meta-row">')
-        lines.append(f'<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">{str(article.get("source", ""))}</span></div>')
-        lines.append(f'<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">{str(article.get("date", ""))}</span></div>')
-        lines.append('</div>')
-        lines.append('</div>')
-        
-        lines.append(f'<div class="sentiment-indicator {sentiment_class}">{sentiment_label} Impact</div>')
-        lines.append(f'<div class="article-summary">{markdown.markdown(str(article.get("summary", "")))}</div>')  
-        lines.append(f'<a class="article-link" href="{str(article.get("url", ""))}" target="_blank">Read Full Article</a>')
-        lines.append('</div>')
-    
-    lines.append('</div>')
-    
-    # Footer
-    lines.append('<div class="footer">')
-    lines.append('<div class="footer-content">')
-    lines.append('<div>COMPANY</div>')
-    lines.append(f'<div>Generated on {str(briefing.get("date", ""))}</div>')
-    lines.append('</div>')
-    lines.append('<div class="footer-copyright">&copy; COMPANY</div>')
-    lines.append('</div>')
-    
-    lines.append('</div>')
-    lines.append('</body></html>')
-    return "\n".join(lines)
-
-
+    </head><body>
+<div class="document-container">
+<div class="watermark">DRAFT</div>
+<div class="header">
+<div class="header-content">
+<div class="logo-section">
+<img src="images/logo.png" alt="Logo" />
+</div>
+<div class="document-info">
+<div>Report Date: 2025-08-19</div>
+</div>
+</div>
+<div class="briefing-title">Weekly Market Briefing</div>
+<div class="briefing-date">Week Ending 2025-08-19</div>
+</div>
+<div class="executive-summary">
+<h2>Weekly Summary</h2>
+<p>This week's briefing highlights key developments shaping sustainable finance, particularly in emerging markets and transparency initiatives. ICRA's new SPO service for debt frameworks promises enhanced ESG due diligence, while a program integrating agroforestry with small tea growers signals growing opportunities for impact investments in India. Though the featured analysis of the French social analytics market offers tangential insights into technology growth, its direct relevance to ESG mandates remains limited. Looking ahead, expect continued momentum in sustainable agriculture and increasing demand for rigorous ESG assessments, driving greater investor confidence and capital allocation in these areas.</p>
+</div>
+<div class="fund-performance-section">
+<h2 class="section-header">Listed Fund Performance Summary</h2>
+<p style="text-align:center; font-size: 12px; color: #6b7280; margin-bottom: 20px;">Fund data last updated: 2025-07-21 14:18:53</p>
+<div class="fund-tables">
+<div class="fund-table-container">
+<h3>Smallest Discounts</h3>
+<table class="fund-table">
+<tr><th>Fund</th><th>Price</th><th>NAV</th><th>Discount</th></tr>
+<tr><td>Downing Renewables & Infrastructure</td><td>£101.75</td><td>£112.36</td><td class="discount-positive">-9.4%</td></tr>
+<tr><td>Impax Environmental Markets</td><td>£386.50</td><td>£431.87</td><td class="discount-positive">-10.5%</td></tr>
+<tr><td>Greencoat UK Wind</td><td>£126.00</td><td>£150.00</td><td class="discount-positive">-16.0%</td></tr>
+<tr><td>Foresight Solar Fund</td><td>£91.40</td><td>£111.00</td><td class="discount-positive">-17.7%</td></tr>
+<tr><td>Renewables Infrastructure Group</td><td>£89.70</td><td>£112.70</td><td class="discount-positive">-20.4%</td></tr>
+</table>
+</div>
+<div class="fund-table-container">
+<h3>Largest Discounts</h3>
+<table class="fund-table">
+<tr><th>Fund</th><th>Price</th><th>NAV</th><th>Discount</th></tr>
+<tr><td>VH Global Energy Infrastructure</td><td>£71.80</td><td>£103.29</td><td class="discount-negative">-30.5%</td></tr>
+<tr><td>SDCL Efficiency Income</td><td>£57.00</td><td>£90.60</td><td class="discount-negative">-37.1%</td></tr>
+<tr><td>Gore Street Energy Storage Fund</td><td>£60.30</td><td>£102.80</td><td class="discount-negative">-41.3%</td></tr>
+<tr><td>Aquila Energy Efficiency Trust</td><td>£33.00</td><td>£85.55</td><td class="discount-negative">-61.4%</td></tr>
+<tr><td>HydrogenOne Capital Growth</td><td>£27.65</td><td>£89.28</td><td class="discount-negative">-69.0%</td></tr>
+</table>
+</div>
+</div>
+<div class="articles-section">
+<h2 class="section-header">COMPANY Intelligence</h2>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">1</div>
+<h3 class="article-title">ICRA ESG Ratings launches Second Party Opinion to boost transparency in ESG debt market</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">The Times of India</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-08-18T07:07:43Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-positive">Positive Impact</div>
+<div class="article-summary"><ul>
+<li>ICRA ESG Ratings Ltd. launches a Second Party Opinion (SPO) service, offering independent ESG assessments of issuers' debt frameworks, increasing transparency and credibility.</li>
+<li>This new service can assist institutional investors in the sustainable finance sector by providing deeper insights into the alignment of debt instruments with ESG principles and frameworks.</li>
+<li>The SPO will likely enhance due diligence processes for investors seeking to allocate capital to credible and impactful ESG investments, improving risk-adjusted returns.</li>
+</ul>
+<p>Topic: Market Trends</p>
+<p>Mentioned Companies: None</p></div>
+<a class="article-link" href="https://economictimes.indiatimes.com/markets/bonds/icra-esg-ratings-launches-second-party-opinion-to-boost-transparency-in-esg-debt-market/articleshow/123358545.cms" target="_blank">Read Full Article</a>
+</div>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">2</div>
+<h3 class="article-title">Agroforestry push: Assam small tea growers receive agar saplings to boost green economy</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">Syllad.com</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-08-17T07:47:55Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-positive">Positive Impact</div>
+<div class="article-summary"><ul>
+<li>
+<p><strong>Agroforestry Integration:</strong> The program promoting the integration of agroforestry with small tea growers signifies a move towards more sustainable agricultural practices. This aligns with the ESG (Environmental, Social, and Governance) investment priorities of institutional investors focused on sustainable finance.</p>
+</li>
+<li>
+<p><strong>Community Engagement:</strong> The focus on small tea growers and local communities reflects a social dimension crucial for sustainable investments. Institutional investors increasingly seek projects that demonstrate positive social impact alongside environmental benefits.</p>
+</li>
+<li>
+<p><strong>Regional Focus:</strong> The program's location in the Jorhat district of Assam (implied by Titabor block), India, highlights emerging market opportunities within sustainable agriculture. This provides potential avenues for institutional investors seeking diversification and impact investments in developing economies.</p>
+</li>
+</ul>
+<p>Topic: Corporate Action
+Mentioned Companies: None</p></div>
+<a class="article-link" href="https://www.syllad.com/agroforestry-push-assam-small-tea-growers-receive-agar-saplings-to-boost-green-economy/" target="_blank">Read Full Article</a>
+</div>
+<div class="article-card">
+<div class="article-header">
+<div class="article-number">3</div>
+<h3 class="article-title">France Social Analytics for Marketing Leader Market: Key Trends</h3>
+</div>
+<div class="article-meta">
+<div class="meta-row">
+<div class="meta-item"><span class="meta-label">Source:</span><span class="meta-value">Linkedin.com</span></div>
+<div class="meta-item"><span class="meta-label">Published:</span><span class="meta-value">2025-08-16T19:01:44Z</span></div>
+</div>
+</div>
+<div class="sentiment-indicator sentiment-positive">Positive Impact</div>
+<div class="article-summary"><ul>
+<li><strong>Focus on Marketing, not Sustainability:</strong> The article focuses on the social analytics market for marketing <em>within</em> France. This is relevant to institutional investors focusing on the technology or marketing sectors, but not directly linked to sustainable finance.</li>
+<li><strong>Growth Potential:</strong> The market is experiencing rapid evolution and growth, indicating investment opportunities within the French marketing technology space. Institutional investors may see potential for returns, but it's contingent on their specific investment criteria.</li>
+<li><strong>Competitive Landscape:</strong> The article discusses the competitive dynamics of social analytics in marketing. This suggests that institutional investors will need to conduct thorough due diligence to assess the potential of individual companies and the market's long-term viability.</li>
+</ul>
+<p>Topic: Market Trends
+Mentioned Companies: None</p></div>
+<a class="article-link" href="https://www.linkedin.com/pulse/france-social-analytics-marketing-leader-market-maonf" target="_blank">Read Full Article</a>
+</div>
+</div>
+<div class="footer">
+<div class="footer-content">
+<div>COMPANY</div>
+<div>Generated on 2025-08-19</div>
+</div>
+<div class="footer-copyright">&copy; COMPANY</div>
+</div>
+</div>
+</body></html>

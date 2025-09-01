@@ -289,7 +289,7 @@ def create_briefing_from_fund_news():
     # Optionally add a custom intro or fund performance if desired
     generate_markdown(briefing, markdown_path)
     html_content = generate_html(briefing, logo_path='images/logo.png')
-    with open(html_path, 'w') as html_file:
+    with open(html_path, 'w', encoding='utf-8') as html_file:
         html_file.write(html_content)
     generate_pdf(briefing, pdf_path, logo_path='images/logo.png')
     result = {
