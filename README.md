@@ -30,6 +30,7 @@ _Add screenshots or a short GIF to `./images/` and reference them here._
 
 ## Architecture
 
+``` mermaid
 flowchart TD
   A["Sources (NewsAPI, MarketAux, URLs)"] --> B["Fetch"]
   B --> C["Scrape full text (Playwright & Trafilatura)"]
@@ -40,7 +41,7 @@ flowchart TD
   G --> H["Formatter (Markdown / HTML / PDF)"]
   H --> I["Web UI (review & download)"]
   D -->|human in the loop| I
-
+```
 
 **Key modules**: `news_fetcher.py`, `fund_news_fetcher.py`, `news_scraper/`, `deduplicator.py`, `scorer.py`, `summariser.py`, `reporter.py`, `formatter.py`, `app/` (Flask).
 
