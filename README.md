@@ -30,18 +30,17 @@ _Add screenshots or a short GIF to `./images/` and reference them here._
 
 ## Architecture
 
-```mermaid
 flowchart TD
-  A[Sources: NewsAPI + MarketAux + Direct URLs] --> B[Fetch]
-  B --> C[Scrape full text (Playwright + Trafilatura)]
-  C --> D[Deduplicate]
-  D --> E[Score: sentiment • topics • entities]
-  E --> F[LLM summariser (optional)]
-  F --> G[Reporter (structured brief data)]
-  G --> H[Formatter (Markdown • HTML • PDF)]
-  H --> I[Web UI: review and download]
-  D <-->|human in the loop| I
-````
+  A["Sources (NewsAPI, MarketAux, URLs)"] --> B["Fetch"]
+  B --> C["Scrape full text (Playwright & Trafilatura)"]
+  C --> D["Deduplicate"]
+  D --> E["Score (sentiment, topics, entities)"]
+  E --> F["LLM summariser (optional)"]
+  F --> G["Reporter (structured brief)"]
+  G --> H["Formatter (Markdown / HTML / PDF)"]
+  H --> I["Web UI (review & download)"]
+  D -->|human in the loop| I
+
 
 **Key modules**: `news_fetcher.py`, `fund_news_fetcher.py`, `news_scraper/`, `deduplicator.py`, `scorer.py`, `summariser.py`, `reporter.py`, `formatter.py`, `app/` (Flask).
 
